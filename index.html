@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stages Finance Quant — Europe 2026</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #21262d;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --accent-dim: #1f3a5f;
+      --green: #3fb950;
+      --green-dim: #1a3a24;
+      --orange: #f0883e;
+      --orange-dim: #3d2208;
+      --purple: #bc8cff;
+      --purple-dim: #2d1f4e;
+      --red: #f85149;
+      --red-dim: #3d1515;
+      --yellow: #e3b341;
+      --yellow-dim: #3d2f05;
+      --teal: #39d353;
+      --teal-dim: #0d2b1a;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --muted2: #6e7681;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif; font-size: 14px; line-height: 1.6; min-height: 100vh; }
+
+    /* ── HEADER ── */
+    header { background: linear-gradient(180deg,#161b22 0%,#0d1117 100%); border-bottom: 1px solid var(--border); padding: 28px 40px 22px; }
+    header h1 { font-size: 22px; font-weight: 700; letter-spacing: -.5px; }
+    header h1 span { color: var(--accent); }
+    .header-meta { color: var(--muted); font-size: 12px; margin-top: 6px; }
+    .header-meta b { color: var(--text); }
+
+    /* ── TOOLBAR ── */
+    .toolbar { position: sticky; top: 0; z-index: 100; background: rgba(13,17,23,.96); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 12px 40px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .search-wrap { position: relative; flex: 0 0 260px; }
+    .search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted2); pointer-events: none; }
+    .search-wrap input { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 7px 10px 7px 32px; border-radius: 8px; font-size: 13px; outline: none; transition: border-color .15s; }
+    .search-wrap input:focus { border-color: var(--accent); }
+    .search-wrap input::placeholder { color: var(--muted2); }
+    .filters { display: flex; gap: 5px; flex-wrap: wrap; }
+    .fbtn { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 500; transition: all .15s; white-space: nowrap; user-select: none; }
+    .fbtn:hover { border-color: var(--accent); color: var(--accent); }
+    .fbtn.on { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+    .tcount { margin-left: auto; color: var(--muted); font-size: 12px; white-space: nowrap; }
+    .tcount b { color: var(--text); }
+
+    /* ── GRID ── */
+    .grid-wrap { padding: 22px 40px 0; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(360px,1fr)); gap: 14px; }
+
+    /* ── CARD ── */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 11px; transition: border-color .15s,box-shadow .15s,transform .15s; }
+    .card:hover { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent-dim),0 8px 24px rgba(0,0,0,.4); transform: translateY(-2px); }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .card-title { flex: 1; }
+    .company { font-weight: 700; font-size: 14.5px; line-height: 1.3; }
+    .role { color: var(--muted); font-size: 12px; margin-top: 3px; line-height: 1.4; }
+    .cat-icon { width: 34px; height: 34px; border-radius: 8px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+    .tags { display: flex; gap: 5px; flex-wrap: wrap; }
+    .tag { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+    .t-loc  { background: var(--accent-dim);  color: var(--accent); }
+    .t-dur  { background: var(--green-dim);   color: var(--green); }
+    .t-off  { background: var(--green-dim);   color: var(--green); }
+    .t-sum  { background: var(--orange-dim);  color: var(--orange); }
+    .t-cat  { background: var(--purple-dim);  color: var(--purple); }
+    .t-new  { background: var(--yellow-dim);  color: var(--yellow); }
+    .desc { color: var(--muted); font-size: 12.5px; line-height: 1.6; flex: 1; }
+    .skills { display: flex; gap: 4px; flex-wrap: wrap; }
+    .skill { background: var(--surface2); border: 1px solid var(--border); color: var(--muted2); font-size: 11px; padding: 2px 7px; border-radius: 5px; }
+    .card-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); }
+    .date-label { color: var(--muted2); font-size: 11.5px; flex: 1; line-height: 1.4; }
+    .btn-apply { display: inline-flex; align-items: center; gap: 4px; text-decoration: none; padding: 6px 13px; border-radius: 7px; font-size: 12px; font-weight: 600; white-space: nowrap; flex-shrink: 0; transition: all .15s; background: var(--accent); color: #0d1117; }
+    .btn-apply:hover { background: #79baff; }
+
+    /* ── PAGINATION ── */
+    .pag-wrap { padding: 28px 40px 48px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    .pgb { min-width: 34px; height: 34px; padding: 0 8px; background: var(--surface2); border: 1px solid var(--border); color: var(--muted); border-radius: 7px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; justify-content: center; transition: all .15s; user-select: none; }
+    .pgb:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+    .pgb.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); font-weight: 700; }
+    .pgb:disabled { opacity: .35; cursor: default; }
+    .pg-dots { color: var(--muted2); padding: 0 2px; align-self: center; font-size: 13px; }
+
+    /* ── EMPTY ── */
+    .empty { grid-column: 1/-1; padding: 60px 20px; text-align: center; color: var(--muted); }
+    .empty p { font-size: 15px; margin-top: 12px; }
+
+    @media (max-width: 700px) {
+      header,.toolbar,.grid-wrap,.pag-wrap { padding-left: 16px; padding-right: 16px; }
+      .grid { grid-template-columns: 1fr; }
+      .search-wrap { flex: 1 1 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Stages Finance <span>Quantitatif</span> — Europe 2026</h1>
+  <p class="header-meta">
+    Profil : <b>Grande école · Maths app · Programmation · Économétrie</b> &nbsp;·&nbsp;
+    Durée cible : <b>Césure 6 mois</b> &nbsp;·&nbsp;
+    Début : <b>août – nov. 2026</b> &nbsp;·&nbsp;
+    <b id="total-count">…</b> offres · Mis à jour le <b>25 mai 2026</b>
+  </p>
+</header>
+
+<div class="toolbar">
+  <div class="search-wrap">
+    <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input id="q" type="text" placeholder="Entreprise, ville, compétence…" oninput="refresh()" />
+  </div>
+  <div class="filters" id="filters">
+    <button class="fbtn on" data-f="all"         onclick="setF(this)">Tout</button>
+    <button class="fbtn"    data-f="hedge"        onclick="setF(this)">🏦 Hedge Fund</button>
+    <button class="fbtn"    data-f="banque"       onclick="setF(this)">🏛 Banque IB</button>
+    <button class="fbtn"    data-f="asset"        onclick="setF(this)">📊 Asset Mgmt</button>
+    <button class="fbtn"    data-f="assurance"    onclick="setF(this)">🛡 Assurance</button>
+    <button class="fbtn"    data-f="energie"      onclick="setF(this)">⛽ Énergie &amp; Matières premières</button>
+    <button class="fbtn"    data-f="prop"         onclick="setF(this)">⚡ Prop Trading</button>
+    <button class="fbtn"    data-f="crypto"       onclick="setF(this)">🪙 Crypto / DeFi</button>
+    <button class="fbtn"    data-f="institution"  onclick="setF(this)">🌐 Institutions</button>
+  </div>
+  <div class="tcount" id="tcount"></div>
+</div>
+
+<div class="grid-wrap"><div class="grid" id="grid"></div></div>
+<div class="pag-wrap" id="pag"></div>
+
+<script>
+const PER = 9;
+let cat = "all", page = 1;
+
+/* ══════════════════════════════════════════════════════════════
+   DATA  — 73 offres
+══════════════════════════════════════════════════════════════ */
+const D = [
+
+/* ──────────── HEDGE FUNDS ──────────── */
+{cat:"hedge",icon:"🏦",company:"Qube Research & Technologies (QRT)",role:"Internship — Quantitative Research / Trading",loc:"Paris · Londres · Zurich · Genève",dur:"4–6 mois",type:"off",tl:"Off-cycle",date:"Début : avr.–juin 2026 (continu)",
+desc:"QRT est un hedge fund systématique top-tier. Stage de 4 à 6 mois en recherche quantitative ou trading algo : développement de modèles de prédiction, analyse de signaux, mise en production de stratégies. Plusieurs bureaux européens dont Paris disponibles.",
+skills:["Maths avancées","Python/C++","ML","Séries temporelles","Signaux"],
+url:"https://job-boards.greenhouse.io/quberesearchandtechnologies/jobs/8095410002"},
+
+{cat:"hedge",icon:"🏦",company:"Qube Research & Technologies (QRT)",role:"Internship — Quantitative Developer",loc:"Paris · Londres · Zurich",dur:"5–6 mois",type:"off",tl:"Off-cycle",date:"Début : 2026 (continu)",
+desc:"Développement d'outils et d'infrastructures quantitatives pour des stratégies de trading systématique. Très forte composante génie logiciel appliqué à la finance. Profil maths app + C++/Python de haut niveau.",
+skills:["Python","C++","Infrastructure quant","Algorithmique","Finance"],
+url:"https://builtin.com/job/2026-internship-quantitative-developer/7004358"},
+
+{cat:"hedge",icon:"🏦",company:"Citadel",role:"Quantitative Research Analyst Intern — BS/MS (Europe)",loc:"Londres / Dublin",dur:"11 semaines",type:"summer",tl:"Programme été",date:"Été 2026",
+desc:"Programme compétitif de recherche quantitative chez Citadel. Développement de modèles statistiques avancés et de stratégies de trading. Collaboration avec des chercheurs seniors sur des données de marché réelles.",
+skills:["Python","Statistiques","ML","Finance de marché","Optimisation"],
+url:"https://www.citadel.com/careers/details/quantitative-research-analyst-intern-bs-ms-europe/"},
+
+{cat:"hedge",icon:"🏦",company:"Millennium Management",role:"Trading Off-Cycle Quantitative Intern 2026",loc:"Londres",dur:"Off-cycle",type:"off",tl:"Off-cycle",date:"Recrutement actif — dates à confirmer",
+desc:"Soutien aux stratégies d'investissement par l'analyse de données et le développement de modèles. Collaboration directe avec les équipes de portfolio managers dans ce multi-manager hedge fund de premier plan.",
+skills:["Data analysis","Modélisation","Python/R","Finance quant"],
+url:"https://campusjobs.mlp.com/careers/job/755954852312-trading-off-cycle-quantitative-intern-2026-london-london-united-kingdom?domain=mlp.com&microsite=campus-site"},
+
+{cat:"hedge",icon:"🏦",company:"Balyasny Asset Management (BAM)",role:"Quantitative Researcher — Off-cycle Internship",loc:"Londres",dur:"Off-cycle",type:"off",tl:"Off-cycle",date:"Recrutement continu",
+desc:"Identification de nouvelles sources d'alpha, amélioration des stratégies quantitatives et optimisation de l'exécution. BAM est un hedge fund multi-stratégies reconnu pour ses programmes de formation. Applications ouvertes 2026.",
+skills:["Alpha research","Statistiques","Python","Finance de marché"],
+url:"https://www.bamfunds.com/careers/internships"},
+
+{cat:"hedge",icon:"🏦",company:"Brevan Howard",role:"Summer Internship — Quantitative Investment Strategies",loc:"Londres",dur:"10 semaines",type:"summer",tl:"Programme été",date:"Été 2026",
+desc:"Formation intensive d'une semaine sur les marchés financiers puis intégration dans les équipes QIS. Exposition aux stratégies quantitatives d'un des plus grands macro hedge funds mondiaux (AUM ~35 Mds $).",
+skills:["Macro","QIS","Marchés financiers","Risk"],
+url:"https://brevanhoward.wd3.myworkdayjobs.com/en-US/BH_ExternalCareers/job/XMLNAME-2026-Summer-Internship-Programme---Quantitative-Investment-Strategies--London_JR101237"},
+
+{cat:"hedge",icon:"🏦",company:"Brevan Howard",role:"Summer Internship — Artificial Intelligence & Quant",loc:"Londres",dur:"10 semaines",type:"summer",tl:"Programme été",date:"Été 2026",
+desc:"Application de méthodes d'IA et de ML aux problèmes de trading et de gestion des risques dans un macro hedge fund top-tier. Profil très technique recherché.",
+skills:["Machine Learning","Deep Learning","Quant finance","Python"],
+url:"https://app.the-trackr.com/company/brevan-howard"},
+
+{cat:"hedge",icon:"🏦",company:"Brevan Howard",role:"Summer Internship — Macro Trading",loc:"Genève",dur:"10 semaines",type:"summer",tl:"Programme été",date:"Été 2026 — Genève",
+desc:"Formation d'une semaine puis intégration sur le desk de trading macro discrétionnaire à Genève. Rare opportunité d'exposition au macro trading dans un hub financier suisse de premier plan.",
+skills:["Macro trading","Taux","FX","Matières premières"],
+url:"https://builtin.com/job/2026-summer-internship-programme-macro-trading-geneva/8770362"},
+
+{cat:"hedge",icon:"🏦",company:"Man Group — AHL",role:"2026 AHL Quant Talent Programme — Summer Internship",loc:"Londres",dur:"Été",type:"summer",tl:"Programme été",date:"Été 2026",
+desc:"Programme phare du bras systématique de Man Group. Développement de modèles de trading quantitatifs sur un large spectre d'actifs. Très forte culture recherche académique.",
+skills:["Trading systématique","Recherche quant","C++/Python","Signaux"],
+url:"https://builtin.com/job/2026-ahl-summer-intern-quant-talent-programme/7119239"},
+
+{cat:"hedge",icon:"🏦",company:"Man Global Markets",role:"High-Frequency Quantitative Research — Summer 2026",loc:"Londres",dur:"Été",type:"summer",tl:"Programme été",date:"Été 2026",
+desc:"Recherche quantitative appliquée au trading haute fréquence. Microstructures de marché, modélisation statistique des prix, optimisation des stratégies d'exécution. Profil tech très élevé requis.",
+skills:["HFT","Microstructure","C++","Stats avancées","Signaux"],
+url:"https://www.efinancialcareers.com/jobs-USA-NY-New_York-Man_Global_Markets_High-Frequency_Quantitative_Research_Summer_2026_Internship.id24166191"},
+
+{cat:"hedge",icon:"🏦",company:"Jane Street",role:"Quantitative Researcher / Quantitative Trader Internship",loc:"Londres",dur:"10–12 semaines (juin–sept.)",type:"summer",tl:"Programme été",date:"Été 2026 — Londres (juin à septembre)",
+desc:"Jane Street est l'une des firmes de trading quantitatif les plus réputées au monde. Deux tracks : Quantitative Researcher (modélisation statistique, construction de signaux, analyse de données) et Quantitative Trader (trading algo, gestion du risque en temps réel). Culture académique intense, profil maths/stats de très haut niveau requis.",
+skills:["Maths avancées","Python","Trading quant","Probabilités","Statistiques"],
+url:"https://www.janestreet.com/join-jane-street/internships/"},
+
+{cat:"hedge",icon:"🏦",company:"D. E. Shaw & Co.",role:"Trader / Analyst Summer Internship — London 2026",loc:"Londres",dur:"Été 2026",type:"summer",tl:"Programme été",date:"Été 2026 — Londres",
+desc:"The D. E. Shaw group est une firme d'investissement et de technologie systématique de référence mondiale (fondée 1988). Stage en trading algorithmique et analyse quantitative à Londres. Profil mathématique et analytique d'excellence requis pour l'un des hedge funds systématiques les plus respectés.",
+skills:["Trading systématique","Analyse quant","Maths","Algorithmique","Python"],
+url:"https://www.brightnetwork.co.uk/graduate-jobs/de-shaw-co/traderanalyst-summer-internship-london-2026"},
+
+{cat:"hedge",icon:"🏦",company:"Squarepoint Capital",role:"Intern Quant Researcher — London",loc:"Londres",dur:"Stage (off-cycle ou été)",type:"off",tl:"Off-cycle possible",date:"Recrutement continu — Londres",
+desc:"Squarepoint Capital est un hedge fund quantitatif global opérant des stratégies entièrement systématiques. Stage en recherche quantitative : développement de nouvelles stratégies, backtesting rigoureux, analyse de données de marché. Profil très solide en maths et programmation requis ; grande autonomie.",
+skills:["Recherche quant","Backtesting","Trading systématique","Python/C++","Statistiques"],
+url:"https://www.squarepoint-capital.com/early-careers"},
+
+/* ──────────── PROP TRADING ──────────── */
+{cat:"prop",icon:"⚡",company:"Flow Traders",role:"Trading Intern",loc:"Amsterdam",dur:"Variable (off-cycle possible)",type:"off",tl:"Off-cycle possible",date:"Recrutement continu",
+desc:"Stage de trading au sein du leader mondial du market making d'ETF. Profil compétitif et analytique requis. Excellente formation au trading électronique sur toutes classes d'actifs.",
+skills:["Market making","ETF","Trading électronique","Analyse quant"],
+url:"https://www.flowtraders.com/careers/job-description/7100637"},
+
+{cat:"prop",icon:"⚡",company:"IMC Trading",role:"Trader Intern 2026 (Summer)",loc:"Amsterdam",dur:"Été 2026",type:"summer",tl:"Programme été",date:"Été 2026",
+desc:"Trading quantitatif et market making chez l'une des firmes de prop trading les plus reconnues. Exposition à la recherche quantitative dans un environnement ultra-compétitif.",
+skills:["Quant trading","Market making","C++/Python","Probabilités"],
+url:"https://app.the-trackr.com/company/imc-trading"},
+
+{cat:"prop",icon:"⚡",company:"IMC Trading",role:"Trader Assistant (Working Student) — Off-Cycle 2026",loc:"Amsterdam",dur:"Off-cycle",type:"off",tl:"Off-cycle — compatible césure",date:"Recrutement continu",
+desc:"Poste off-cycle compatible avec une césure. Assistance aux traders sur desk, accès direct à des problèmes de trading réels. Supervision étroite par des traders expérimentés.",
+skills:["Trading","Analyse quant","Algorithmique","Finance"],
+url:"https://app.the-trackr.com/company/imc-trading"},
+
+{cat:"prop",icon:"⚡",company:"Optiver",role:"Trading, Tech & Research Internship",loc:"Amsterdam",dur:"Variable",type:"off",tl:"Continu",date:"Recrutement continu",
+desc:"Stages en trading, dev ou recherche quant chez l'un des plus anciens market makers (fondé 1986). Culture de la performance, exposure aux dérivés sur tous marchés. Profil maths/stats très valorisé.",
+skills:["Market making","Quant research","C++","Mathématiques","Dérivés"],
+url:"https://optiver.com/working-at-optiver/internships/"},
+
+{cat:"prop",icon:"⚡",company:"Citadel Securities",role:"Quantitative Research Analyst Intern — BS/MS (Europe)",loc:"Londres / Dublin",dur:"11 semaines (été)",type:"summer",tl:"Programme été",date:"Été 2026 — Londres",
+desc:"Citadel Securities est l'un des plus grands market makers mondiaux. À distinguer de Citadel (hedge fund), c'est la branche market making/prop trading du groupe. Stage quantitatif : développement de stratégies de trading, analyse statistique avancée, backtesting de modèles sur données réelles. Programme parmi les plus compétitifs de l'industrie.",
+skills:["Market making","Quant research","Statistiques","Python","ML"],
+url:"https://www.citadelsecurities.com/careers/details/quantitative-research-analyst-intern-bs-ms-europe/"},
+
+/* ──────────── BANQUES IB ──────────── */
+{cat:"banque",icon:"🏛",company:"Morgan Stanley",role:"2026 Quantitative Finance Off-Cycle Internship",loc:"Londres",dur:"6 ou 9 mois",type:"off",tl:"Off-cycle — 6 ou 9 mois",date:"Off-cycle 2026 — idéal césure",
+desc:"Programme off-cycle au sein de l'équipe Quantitative Finance de Morgan Stanley à Londres. Travail aux côtés de desk strategists pour développer des modèles de pricing, couverture et gestion des risques. Rotations possibles entre plusieurs équipes.",
+skills:["Pricing","Modélisation financière","Python/C++","Risk","Dérivés"],
+url:"https://jobs.wallstreetfriends.org/companies/morgan-stanley/jobs/61739787-2026-quantitative-finance-off-cycle-internship-london"},
+
+{cat:"banque",icon:"🏛",company:"Morgan Stanley",role:"2026 Risk Management Off-Cycle Internship",loc:"Paris",dur:"Off-cycle",type:"off",tl:"Off-cycle — Paris",date:"Off-cycle 2026",
+desc:"Programme off-cycle en gestion des risques au bureau de Paris. Analyse quantitative des risques de marché, crédit et opérationnels. Collaboration avec les équipes front et middle office.",
+skills:["Risk Management","Quantitatif","Reporting réglementaire"],
+url:"https://morganstanley.tal.net/candidate/jobboard/vacancy/1/adv/?f_Item_Opportunity_13857_lk=765&f_Item_Opportunity_17048_lk=775,774"},
+
+{cat:"banque",icon:"🏛",company:"Morgan Stanley",role:"Investment Management Off-Cycle — Risk Management",loc:"Londres",dur:"12 mois — sept. 2026",type:"off",tl:"Off-cycle — 12 mois",date:"Début sept. 2026",
+desc:"Stage de 12 mois en gestion des risques au sein de Morgan Stanley Investment Management. Démarrage septembre 2026. Analyse quantitative de portefeuilles multi-classes.",
+skills:["Risk Management","Gestion de portefeuille","Quantitatif"],
+url:"https://www.nablacareers.com/finance-jobs/morganstanley/uk/risk-management/2026-investment-management-off-cycle-internship-risk-management-london/"},
+
+{cat:"banque",icon:"🏛",company:"Goldman Sachs",role:"Finance & Risk Quantitative Strats — Paris Off-Cycle 2026",loc:"Paris",dur:"Off-cycle (3, 6 ou 12 mois)",type:"off",tl:"Off-cycle",date:"Candidature dès que possible",
+desc:"Strategist quantitatif au sein de Finance & Risk à Paris. Développement de modèles d'analyse des risques et collaboration directe avec les desks de trading. Profil maths avancées requis.",
+skills:["Strats quant","Risk models","Python","Finance de marché"],
+url:"https://www.heysuccess.com/opportunity/Goldman-Sachs-2026-%257C-EMEA-%257C-Paris-%257C-Finance-and-Risk-Quantitative-Strats-%257C-Seasonal-Off-Cycle-Internship-56364"},
+
+{cat:"banque",icon:"🏛",company:"Goldman Sachs",role:"FICC & Equities — Quantitative Strats Paris Off-Cycle 2026",loc:"Paris",dur:"Off-cycle",type:"off",tl:"Off-cycle",date:"Off-cycle 2026",
+desc:"Développement d'outils quantitatifs pour les desks FICC et actions à Paris. Pricing, analyse de risque sur produits de taux, crédit, matières premières et actions.",
+skills:["FICC","Équities","Trading quant","Structuration","Pricing"],
+url:"https://higher.gs.com/roles/150791"},
+
+{cat:"banque",icon:"🏛",company:"Goldman Sachs",role:"Global Investment Research — Macro Research & Portfolio Strategy Off-Cycle",loc:"Londres",dur:"Off-cycle",type:"off",tl:"Off-cycle",date:"Off-cycle 2026",
+desc:"Contribution à la recherche macroéconomique et à la stratégie de portefeuille. Analyses économétriques, modèles macro, publications de recherche pour clients institutionnels.",
+skills:["Macro","Économétrie","Portfolio strategy","Recherche"],
+url:"https://www.goldmansachs.com/careers/students/programs-and-internships/emea/off-cycle-internships"},
+
+{cat:"banque",icon:"🏛",company:"JPMorgan Chase",role:"2026 Quantitative Finance Analyst Program — Paris",loc:"Paris",dur:"Off-cycle (printemps / été / automne)",type:"off",tl:"Off-cycle — flexible",date:"Début printems, été ou automne 2026",
+desc:"Développement et révision de modèles mathématiques utilisés dans toute la banque. Validation de modèles de pricing, optimisation de solutions financières, identification de patterns.",
+skills:["Modélisation mathématique","Validation modèles","Python","Pricing"],
+url:"https://builtin.com/job/2026-quantitative-finance-analyst-program-paris/7014779"},
+
+{cat:"banque",icon:"🏛",company:"JPMorgan Chase",role:"Commercial & Investment Banking — Markets Off-Cycle Paris 2026",loc:"Paris",dur:"3 ou 6 mois",type:"off",tl:"Off-cycle — 3 ou 6 mois",date:"Off-cycle — Paris",
+desc:"Stage au sein de l'équipe Global Markets de JPMorgan Paris. Solutions financières sur toutes classes d'actifs : trading, structuration, sales.",
+skills:["Global Markets","Structuration","Analyse financière"],
+url:"https://jpmc.fa.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1002/job/210701326"},
+
+{cat:"banque",icon:"🏛",company:"Barclays",role:"Sales, Trading & Structuring Off-Cycle Internship Programme 2026",loc:"Paris",dur:"3–6 mois",type:"off",tl:"Off-cycle — 3 à 6 mois",date:"Off-cycle — Paris",
+desc:"Stage off-cycle IB, Markets, Corporate Banking ou Quantitative Analytics chez Barclays Paris. Exposition complète aux activités de marché avec un volet analytique fort.",
+skills:["Sales & Trading","Quant Analytics","Structuration","Fixed Income"],
+url:"https://barclays.wd3.myworkdayjobs.com/en-US/External_Career_Site_Barclays/job/Sales--Trading-and-Structuring-Off-Cycle-Internship-Programme-2026-Paris_JR-0000070810"},
+
+{cat:"banque",icon:"🏛",company:"Citi",role:"Quantitative Analysis Off-Cycle Placement 2026",loc:"Londres",dur:"Off-cycle",type:"off",tl:"Off-cycle",date:"Off-cycle 2026",
+desc:"Équipe Quantitative Analysis au sein de Markets chez Citi à Londres. Développement de modèles mathématiques et d'outils analytiques pour les desks de trading.",
+skills:["Quantitative Analysis","Modélisation","Markets","Pricing"],
+url:"https://www.brightnetwork.co.uk/graduate-jobs/citi/quantitative-analysis-off-cycle-placement-2026"},
+
+{cat:"banque",icon:"🏛",company:"Citi",role:"Sales & Trading FX Corporate — Off-Cycle Paris 2026",loc:"Paris",dur:"6 mois — juil. 2026",type:"off",tl:"Off-cycle — 6 mois",date:"Juillet 2026 — 6 mois",
+desc:"Stage de 6 mois en FX Corporate Sales & Trading à Paris démarrant en juillet 2026. Risque de change pour les clients corporate, marchés des changes. Bon timing pour une césure automne.",
+skills:["FX","Sales & Trading","Risque de change"],
+url:"https://www.nablacareers.com/finance-jobs/citi/europe/sales-trading/markets-sales-and-trading-fx-corporate-off-cycle-internship-paris-france-2026/"},
+
+{cat:"banque",icon:"🏛",company:"Citi",role:"Markets — Sales, Trading & Structuring Off-Cycle Internship Frankfurt 2026",loc:"Francfort",dur:"Off-cycle",type:"off",tl:"Off-cycle",date:"Off-cycle — Francfort",
+desc:"Stage en salle des marchés à Francfort. Exposition aux marchés FICC européens, structuration de produits et analyse quantitative pour clients institutionnels.",
+skills:["Trading floor","FICC","Marchés financiers","Structuration"],
+url:"https://jobs.citi.com/programfinder?grad_trainingPage=2&h_id=209"},
+
+{cat:"banque",icon:"🏛",company:"UBS",role:"2026 Off-Cycle Internship — Quant Risk Modelling",loc:"Zurich",dur:"6–12 mois",type:"off",tl:"Off-cycle — 6 à 12 mois",date:"6–12 mois — Zurich",
+desc:"Développement et maintenance de modèles quantitatifs de risque à Zurich. Stress testing, provisionnement et risque climatique pour le portefeuille suisse. Stage rémunéré.",
+skills:["Risk Modelling","Stress testing","Python/R","Réglementation"],
+url:"https://jobs.ubs.com/TGnewUI/Search/home/HomeWithPreLoad?partnerid=25008&siteid=5131&PageType=JobDetails&jobid=346129"},
+
+{cat:"banque",icon:"🏛",company:"UBS",role:"2026 Off-Cycle Internship — IB Global Markets Derivatives & Solutions",loc:"Zurich",dur:"Off-cycle",type:"off",tl:"Off-cycle",date:"Off-cycle 2026 — Zurich",
+desc:"Équipe Global Markets d'UBS, division Derivatives & Solutions à Zurich. Produits dérivés complexes, structuration de solutions sur mesure pour clients institutionnels.",
+skills:["Dérivés","Structuration","Global Markets","Pricing"],
+url:"https://jobs.ubs.com/TGnewUI/Search/home/HomeWithPreLoad?partnerid=25008&siteid=5131&PageType=searchResults"},
+
+{cat:"banque",icon:"🏛",company:"Deutsche Bank",role:"Quantitative FIC Internship Programme 2026",loc:"Londres",dur:"Été (~8 semaines)",type:"summer",tl:"Programme été",date:"Été 2026",
+desc:"Stage quantitatif au sein de l'équipe Fixed Income & Currencies de Deutsche Bank. Modèles quantitatifs appliqués aux marchés de taux, de change et de crédit.",
+skills:["FIC","Taux","FX","Quant modelling","Pricing"],
+url:"https://www.brightnetwork.co.uk/graduate-jobs/deutsche-bank/quantitative-fic-internship-programme-2026"},
+
+{cat:"banque",icon:"🏛",company:"HSBC",role:"Stage — Recherche en Macroéconomie (f/m/d)",loc:"Paris (av. Kléber)",dur:"6 mois — sept. 2026",type:"off",tl:"Césure compatible — sept. 2026",date:"À partir de septembre 2026 — 6 mois",
+desc:"Au sein de la Direction des Études Économiques (Global Research), rattachée à la recherche macro mondiale de HSBC. Prévisions mensuelles des grandes variables macro (inflation, PIB, consommation). Très bon profil économétrie/macro.",
+skills:["Macroéconomie","Économétrie","Prévision","Python/R","Inflation"],
+url:"https://youllgetit.eu/internships/e1b04942-7511-5833-bce1-7b1cd55015ba/stage-recherche-en-macroconomie-at-hsbc-paris"},
+
+/* ──────────── ASSET MGMT, BANQUES FR & PRIVÉES ──────────── */
+{cat:"asset",icon:"📊",company:"Natixis CIB",role:"Stage 6 mois — Analyste Quantitatif des Risques F/H",loc:"Paris",dur:"6 mois — dès avr. 2026",type:"off",tl:"Césure compatible",date:"À partir d'avril 2026 — 6 mois",
+desc:"Pôle 'Market and Counterparty Risk Modeling'. Recherche appliquée sur des méthodes bayésiennes (régression par processus gaussien), économétrie et modélisation du risque de marché et de contrepartie.",
+skills:["Inférence bayésienne","Processus gaussiens","Risk","Python","Économétrie"],
+url:"https://jobs-stages.letudiant.fr/entreprises/natixis-sa/offres/stage-6-mois-analyste-quantitatif-des-risques-f-h-paris-france"},
+
+{cat:"asset",icon:"📊",company:"Natixis IM",role:"Stage 6 mois — Analyste Quantitatif F/H",loc:"Paris",dur:"6 mois",type:"off",tl:"Césure compatible",date:"6 mois — Paris",
+desc:"Recherche appliquée à l'investissement quantitatif. Bonnes connaissances en statistiques, théorie économique et programmation. Contribution à des projets de gestion quantitative active.",
+skills:["Statistiques","Gestion active quant","Python/R","Théorie éco."],
+url:"https://www.welcometothejungle.com/fr/companies/natixis/jobs/stage-6-mois-analyste-quantitatif-f-h_paris_NATIX_yVrDWo8"},
+
+{cat:"asset",icon:"📊",company:"Natixis CIB",role:"Stage 6 mois — Commodity Structured Finance Analyst F/H",loc:"Paris",dur:"6 mois",type:"off",tl:"Césure compatible",date:"6 mois — Paris",
+desc:"Intersection entre finance structurée et commodités. Modélisation financière, analyse des marchés physiques et financiers de matières premières dans un contexte de banque de financement.",
+skills:["Commodités","Finance structurée","Modélisation"],
+url:"https://www.welcometothejungle.com/fr/pages/stage-finance"},
+
+{cat:"asset",icon:"📊",company:"BNP Paribas",role:"Stagiaire — Analyste de Risque de Marché (été 2026)",loc:"Paris",dur:"Été 2026",type:"summer",tl:"Programme été",date:"Été 2026",
+desc:"Analyse quantitative des risques de marché au sein de l'une des plus grandes banques mondiales. Modélisation des risques sur produits de taux, crédit, actions et change.",
+skills:["Risque de marché","VaR","Analyse quantitative","Dérivés"],
+url:"https://group.bnpparibas/emploi-carriere/offre-emploi/stagiaire-analyste-de-risque-de-marche-ete-2026"},
+
+{cat:"asset",icon:"📊",company:"BNP Paribas CIB",role:"Stagiaire — Gouvernance & Validation de Modèle (été 2026)",loc:"Paris",dur:"Été 2026",type:"summer",tl:"Programme été",date:"Été 2026",
+desc:"Évaluations quantitatives indépendantes des modèles conformément aux normes internes et directives réglementaires (TRIM, SR11-7). Solide formation en mathématiques requise.",
+skills:["Validation modèles","Réglementation bancaire","Python/R"],
+url:"https://careers.cib.bnpparibas/jobs/stagiaire-en-gouvernance-validation-de-modele-ete-2026/"},
+
+{cat:"asset",icon:"📊",company:"BNP Paribas",role:"Stage — Économiste Junior H/F (6 mois)",loc:"Paris",dur:"6 mois",type:"off",tl:"Césure compatible",date:"6 mois — Paris (dès sept.)",
+desc:"Au sein du département Recherche Macroéconomique de BNP Paribas. Travaux de recherche sur les grandes tendances macro mondiales, modélisation économétrique, contribution aux publications de recherche.",
+skills:["Macroéconomie","Économétrie","Recherche","Prévision macro"],
+url:"https://dogfinance.com/offre/bnp-paribas/stage-economiste-junior-hf---6-mois"},
+
+{cat:"asset",icon:"📊",company:"Ofi Invest Asset Management",role:"Stage — Analyste Quantitatif Validation de Modèles (6 mois)",loc:"Issy-les-Moulineaux",dur:"6 mois",type:"off",tl:"Césure compatible",date:"6 mois — Issy-les-Moulineaux",
+desc:"Validation indépendante de modèles quantitatifs en gestion d'actifs. Structure de taille humaine offrant une forte exposition technique et grande autonomie.",
+skills:["Validation modèles","Quantitatif","Gestion d'actifs","Statistiques"],
+url:"https://www.welcometothejungle.com/fr/companies/ofi-invest/jobs/stage-analyste-quantitatif-validation-de-modeles-6-mois_issy-les-moulineaux"},
+
+{cat:"asset",icon:"📊",company:"Société Générale",role:"Stage — Quantitative Risk Analyst H/F",loc:"Paris (8e)",dur:"6 mois — sept. 2026",type:"off",tl:"Césure compatible — sept. 2026",date:"Septembre 2026 — 6 mois",
+desc:"Stage de 6 mois à partir de septembre 2026. Analyse quantitative des risques chez SocGen. Git et Python/R maîtrisés pour travailler sur les modèles de mesure et suivi des risques de marché.",
+skills:["Risk Quant","Git","Python","Modélisation"],
+url:"https://careers.societegenerale.com/stages"},
+
+{cat:"asset",icon:"📊",company:"Crédit Agricole CIB",role:"Stage — Analyste Quantitatif Risque Climatique H/F",loc:"Montrouge",dur:"6 mois — juil. 2026",type:"off",tl:"Césure compatible",date:"1er juillet 2026 — 6 mois",
+desc:"Stage conventionné de 6 mois débutant le 1er juillet 2026. Analyse quantitative appliquée aux risques climatiques et ESG dans le contexte bancaire. Profil maths + économétrie idéal.",
+skills:["Risque climatique","ESG","Économétrie","Python"],
+url:"https://www.linkfinance.lu/Analyste-quantitatif-Risque-climatique-H-F-Credit-Agricole-CIB-ido-1867437.html"},
+
+{cat:"asset",icon:"📊",company:"Crédit Agricole CIB",role:"Stage — Analyste Risque de Marché et de Contrepartie H/F",loc:"Montrouge",dur:"6 mois",type:"off",tl:"Césure compatible",date:"6 mois — recrutement continu",
+desc:"Stage de 6 mois en risque de marché et de contrepartie chez CA-CIB. Analyse quantitative CVA/DVA, risque de marché. Recrute en continu tout au long de l'année.",
+skills:["Risque de marché","CVA/DVA","Quant","Finance bancaire"],
+url:"https://jobs.ca-cib.com/offre-de-emploi/emploi-assistant-analyste-risque-de-marche-et-de-contrepartie-h-f_112560.aspx"},
+
+{cat:"asset",icon:"📊",company:"AXA Investment Managers",role:"Quant Research Analyst — Internship 6 mois F/M",loc:"Puteaux (Paris)",dur:"6 mois",type:"off",tl:"Césure compatible",date:"6 mois — Puteaux",
+desc:"Recherche quantitative en gestion d'actifs chez AXA IM. Identification d'opportunités dans l'espace equity market-neutral. Backtesting de stratégies, analyse de séries temporelles financières.",
+skills:["Quant research","Market neutral","Backtesting","Séries temporelles"],
+url:"https://www.efinancialcareers-gulf.com/jobs/quantitative-research-analytics-internship/at-axa-investment-managers/in-europe"},
+
+{cat:"asset",icon:"📊",company:"Pictet Group",role:"Internship Programmes (Quantitative / Finance)",loc:"Genève",dur:"6 mois",type:"off",tl:"Césure compatible",date:"Plusieurs vagues — Genève",
+desc:"Pictet, l'une des plus grandes banques privées suisses, propose des stages dans les domaines de la gestion d'actifs quantitative, des hedge funds, de l'analyse financière et de la technologie. Environnement multilatéral francophone à Genève.",
+skills:["Gestion d'actifs","Quant finance","Analyse financière","Hedge funds"],
+url:"https://www.pictet.com/us/en/careers/intership-programmes"},
+
+{cat:"asset",icon:"📊",company:"Julius Baer",role:"Off-Cycle & Summer Internships (Finance / Quant)",loc:"Zurich · Genève",dur:"Off-cycle ou été",type:"off",tl:"Flexible",date:"Plusieurs cycles — Zurich / Genève",
+desc:"Julius Baer, grande banque privée suisse (AUM ~450 Mds CHF), offre des stages off-cycle (6 mois), des programmes d'été et des postes de working students en finance quantitative, gestion de patrimoine et analyse de risque.",
+skills:["Private banking","Quant finance","Risk","Analyse financière"],
+url:"https://www.juliusbaer.com/en/careers/career-starters/internships/"},
+
+{cat:"asset",icon:"📊",company:"Rothschild & Co Asset Management",role:"Stage — Économiste / Analyste Recherche (6 mois)",loc:"Paris",dur:"6 mois — juil. 2026",type:"off",tl:"Césure compatible",date:"Juillet 2026 — 6 mois",
+desc:"Stage de 6 mois en recherche économique et financière au sein de Rothschild & Co AM. Travaux macroéconomiques, modélisation de portefeuilles obligataires, publications de recherche pour clients institutionnels.",
+skills:["Macroéconomie","Recherche éco.","Obligations","Modélisation"],
+url:"https://www.rothschildandco.com/en/careers/"},
+
+/* ──────────── ASSURANCE & RÉASSURANCE ──────────── */
+{cat:"assurance",icon:"🛡",company:"AXA",role:"Internship — Risk Analyst (mai / juin 2026)",loc:"Paris (av. Matignon)",dur:"4 ou 6 mois",type:"off",tl:"Flexible — 4 ou 6 mois",date:"Mai ou juin 2026",
+desc:"Stage en analyse des risques au siège mondial d'AXA. Modélisation quantitative des risques assurantiels, environnement réglementaire Solvabilité II. Démarrage mai ou juin 2026.",
+skills:["Risk Analysis","Actuariat","Solvabilité II","Modélisation"],
+url:"https://careers.axa.com/careers-home/jobs/19942?lang=en-us"},
+
+{cat:"assurance",icon:"🛡",company:"AXA",role:"Internship — P&C Risk Management Actuary",loc:"Paris",dur:"Stage",type:"off",tl:"Flexible",date:"Paris — dates à confirmer",
+desc:"Stage en actuariat et gestion des risques dommages (P&C) au sein d'AXA. Modélisation actuarielle des réserves et des primes, conformité Solvabilité II.",
+skills:["Actuariat P&C","Réserves","Solvabilité II","R/Python"],
+url:"https://careers.axa.com/careers-home/jobs/17318?lang=en-us"},
+
+{cat:"assurance",icon:"🛡",company:"Swiss Re",role:"Actuarial Reserving Intern (4–6 mois)",loc:"Zurich",dur:"4–6 mois",type:"off",tl:"Flexible",date:"2026 — Zurich",
+desc:"Stage en actuariat de provisionnement chez le premier réassureur mondial. Background technique requis : mathématiques, actuariat ou discipline quantitative. Modélisation des réserves, analyse des sinistres.",
+skills:["Actuariat","Provisionnement","Réassurance","Probabilités","R"],
+url:"https://careers.swissre.com/go/Internships/2744401/"},
+
+{cat:"assurance",icon:"🛡",company:"SCOR",role:"Stage — Risque Quantitatif / Actuariat",loc:"Paris",dur:"6 mois",type:"off",tl:"Césure compatible",date:"Recrutement continu",
+desc:"SCOR, 4e réassureur mondial, recrute des stagiaires en actuariat et modélisation quantitative des risques. Profils maths app, économétrie et programmation fortement valorisés.",
+skills:["Actuariat","Modélisation risque","Réassurance","Python/R"],
+url:"https://www.scor.com/en/careers"},
+
+{cat:"assurance",icon:"🛡",company:"Lloyd's of London",role:"Actuarial Graduate Scheme 2026",loc:"Londres",dur:"Programme 2 ans",type:"off",tl:"Graduate scheme",date:"2026 — Londres",
+desc:"Scheme actuariel au sein de Lloyd's, la plus ancienne place de marché d'assurance au monde. Rotations en Actuarial Oversight et Reserving Modelling. Quatre programmes en 2026 : Business, Insurance, Actuarial et Tax.",
+skills:["Actuariat","Reserving","Solvabilité II","Lloyd's market"],
+url:"https://www.lloyds.com/about-lloyds/careers/early-careers/graduates/actuarial-graduate-scheme"},
+
+{cat:"assurance",icon:"🛡",company:"Zurich Insurance Group",role:"Actuarial Summer Internship (10–12 semaines)",loc:"Londres / Birmingham",dur:"10–12 semaines (été)",type:"summer",tl:"Programme été",date:"Été 2026 — Londres",
+desc:"Stage actuariel de 10 à 12 semaines chez Zurich Insurance. Domaines Actuarial, Claims, Finance. Bon point d'entrée dans l'assurance quantitative au niveau européen.",
+skills:["Actuariat","Assurance","Modélisation","Statistiques"],
+url:"https://www.zurichna.com/careers/interns"},
+
+/* ──────────── ÉNERGIE & MATIÈRES PREMIÈRES ──────────── */
+{cat:"energie",icon:"⛽",company:"TotalEnergies Trading (TOTSA)",role:"Quantitative Analyst Intern",loc:"Genève",dur:"Stage (5–6 mois)",type:"off",tl:"Césure compatible",date:"+70 stages/an — Genève, Houston, Singapour",
+desc:"TotalEnergies Trading (TOTSA) propose plus de 70 stages par an dans ses hubs de trading : Genève, Houston, Singapour. Poste de Quantitative Analyst : analyse quantitative des marchés de l'énergie, pricing de produits complexes, modélisation des risques de marché.",
+skills:["Marchés de l'énergie","Quant modelling","Pricing","Risk","Python"],
+url:"https://www.wizbii.com/company/total-fr/job/quantitative-analyst-internship-1"},
+
+{cat:"energie",icon:"⛽",company:"EDF Trading",role:"Quantitative Analysis Intern",loc:"Londres",dur:"Stage",type:"off",tl:"Off-cycle possible",date:"Recrutement continu — Londres",
+desc:"EDF Trading, bras de trading d'électricité, gaz et énergies renouvelables d'EDF. Stage en analyse quantitative des marchés de l'énergie. Très fort background mathématique/physique requis. Coding skills Python indispensables.",
+skills:["Marchés de l'énergie","Quantitative Analysis","Python","Modélisation"],
+url:"https://builtin.com/job/quantitative-analysis-intern/9485329"},
+
+{cat:"energie",icon:"⛽",company:"Statkraft",role:"Intern — Quantitative Portfolio Management",loc:"Düsseldorf",dur:"6 mois — juil. 2026",type:"off",tl:"Césure compatible — juil. 2026",date:"1er juillet 2026 — 6 mois",
+desc:"Stage de 6 mois en gestion quantitative de portefeuille chez le plus grand producteur d'énergies renouvelables d'Europe (Statkraft). Analyse quantitative des portefeuilles électriques, modélisation stochastique des prix de l'énergie.",
+skills:["Gestion de portefeuille","Énergies renouvelables","Modélisation stochastique","Python"],
+url:"https://jobs.smartrecruiters.com/Statkraft1/744000122404718-intern-quantitative-portfolio-management"},
+
+{cat:"energie",icon:"⛽",company:"Gunvor Group",role:"Analytics Intern — Power & Gas Trading",loc:"Genève",dur:"Été 2026",type:"summer",tl:"Programme été",date:"Été 2026 — Genève",
+desc:"Stage analytique au sein du desk Power & Gas de Gunvor, l'un des plus grands traders indépendants de commodités énergétiques (pétrole, gaz, électricité, LNG). Analyse de données de marché, modélisation des spreads.",
+skills:["Power & Gas","Analytics","Trading commodités","Modélisation"],
+url:"https://app.the-trackr.com/company/gunvor"},
+
+{cat:"energie",icon:"⛽",company:"Glencore",role:"Trading Analyst Intern — Quantitative (H2 2026)",loc:"Baar, Suisse",dur:"H2 2026",type:"off",tl:"H2 2026",date:"Deuxième semestre 2026 — Baar",
+desc:"Construction de modèles quantitatifs, outils financiers et statistiques pour les activités de négoce de matières premières chez le géant mondial du commodity trading (métaux, énergie, agriculture).",
+skills:["Modèles quant","Data engineering","Statistiques","Python"],
+url:"https://www.glencore.com/careers/asia/R200001469"},
+
+{cat:"energie",icon:"⛽",company:"Glencore",role:"Quantitative Research (Analytics) — Industrial Placement 2026",loc:"Suisse / Royaume-Uni",dur:"Industrial Placement",type:"off",tl:"Industrial Placement",date:"2026 — longue durée",
+desc:"Placement longue durée en recherche quantitative au sein d'un des plus grands groupes de commodités mondiaux. Exposition à l'ensemble de la chaîne de valeur du trading de matières premières.",
+skills:["Recherche quantitative","Analytics","Commodités","Python"],
+url:"https://www.graduate-jobs.com/job/quantitative-research-analytics-industrial-placement-247315"},
+
+{cat:"energie",icon:"⛽",company:"Castleton Commodities International (CCI)",role:"Commodities Trading Summer Analyst — Quantitative",loc:"Genève / Stamford (CT)",dur:"Été 2026",type:"summer",tl:"Programme été",date:"Été 2026",
+desc:"Exposition concrète au trading physique et financier de commodités avec forte composante risque et technologie. CCI recrute des profils quants sur les FTR (Financial Transmission Rights) et les marchés de l'énergie.",
+skills:["Trading physique/financier","Quant modeling","Énergie","FTR"],
+url:"https://prosple.com/graduate-employers/castleton-commodities-international-cci/jobs-internships/commodities-trading-summer-analyst-internship-program"},
+
+{cat:"energie",icon:"⛽",company:"Trafigura",role:"Early Career — Graduate & Internship Programme 2026",loc:"Genève · Londres · Singapour",dur:"Programme structuré",type:"off",tl:"Programme graduate",date:"Recrutement continu 2026",
+desc:"Programmes graduate et d'apprentissage chez l'un des plus grands traders indépendants mondiaux (pétrole, métaux, minéraux). Bureau européen principal à Genève.",
+skills:["Commodity trading","Supply chain","Analyse de risque"],
+url:"https://www.trafigura.com/careers/early-career-opportunities/"},
+
+/* ──────────── CRYPTO / DEFI ──────────── */
+{cat:"crypto",icon:"🪙",company:"Wincent",role:"Quant Research / Trading Internship — HFT Crypto",loc:"Amsterdam / Europe",dur:"Démarrage juil. 2026",type:"off",tl:"Césure possible",date:"Démarrage juillet 2026 — Europe",
+desc:"Wincent est une firme de trading haute fréquence (HFT) spécialisée sur les marchés crypto, représentant ~1 % du volume mondial. Stage en recherche quantitative ou trading : modèles algo, développement de stratégies, analyse de marché sur les actifs numériques. 120 personnes, culture transparente.",
+skills:["HFT","Crypto","Quant strategies","Algo trading","Python/C++"],
+url:"https://jobs.ashbyhq.com/wincent/722fd4b8-b2ca-4cef-99a1-caa49644d4ee"},
+
+{cat:"crypto",icon:"🪙",company:"Jump Trading",role:"Campus Crypto Researcher (Intern)",loc:"Londres",dur:"Stage",type:"off",tl:"Off-cycle possible",date:"Recrutement continu — Londres",
+desc:"Jump Trading, l'une des plus grandes firmes de trading algorithmique mondiales, recrute des crypto researchers en stage à Londres. Recherche quantitative sur les marchés d'actifs numériques, DeFi, microstructure des marchés crypto.",
+skills:["Crypto","DeFi","Quant research","Market making","Algo trading"],
+url:"https://www.jumptrading.com/hr/students-new-grads"},
+
+{cat:"crypto",icon:"🪙",company:"Wintermute Trading",role:"Algorithmic Trading / Quant Research Internship — Summer 2026",loc:"Londres",dur:"Été 2026",type:"summer",tl:"Programme été",date:"Été 2026 — Londres",
+desc:"Wintermute est l'un des plus grands market makers algorithmiques en actifs numériques (~$2,5 Mds de volume quotidien). Deux tracks : Algo Trading Intern (HFT, market making, Python) et Quant Research Intern (signaux prédictifs, ML, données crypto). Culture très technique, proche de la prop trading.",
+skills:["HFT","Market making","Crypto","Python","ML","Signaux"],
+url:"https://www.brightnetwork.co.uk/graduate-jobs/wintermute/algorithmic-trading-internship-summer-2026"},
+
+{cat:"crypto",icon:"🪙",company:"Keyrock",role:"Quantitative Analyst Intern — Crypto Market Making",loc:"Londres · Bruxelles",dur:"Stage (hybride)",type:"off",tl:"Off-cycle possible",date:"Recrutement actif — Londres / Bruxelles",
+desc:"Keyrock est un leader européen du market making d'actifs numériques (fondé en 2017), présent sur plus de 100 exchanges. Stage en analyse quantitative au sein de l'équipe Strategic Market Making : modèles de pricing, gestion du risque, optimisation des spreads sur marchés crypto. Forte exposition et responsabilités dès le premier jour.",
+skills:["Market making","Crypto","Quant modelling","Python","Risk","Data"],
+url:"https://jobs.ashbyhq.com/keyrock/aa611b0b-983b-4e4c-a7c7-eb1d5e98f316"},
+
+{cat:"crypto",icon:"🪙",company:"Flowdesk",role:"Quantitative Research Intern",loc:"Paris",dur:"6 mois",type:"off",tl:"Césure compatible",date:"Paris — recrutement continu",
+desc:"Flowdesk est un acteur français du trading et de la liquidité d'actifs numériques (fondé en 2020, Paris). Stage en recherche quantitative : construction de signaux prédictifs, analyse de grandes bases de données crypto, développement de modèles de market making. Très bonne exposition pour un profil quant-data dans la fintech parisienne.",
+skills:["Quant research","Data Science","Market making","Python","Crypto","ML"],
+url:"https://careers.speedinvest.com/companies/flowdesk/jobs/37000932-quantitative-research-intern"},
+
+/* ──────────── INSTITUTIONS ──────────── */
+{cat:"institution",icon:"🌐",company:"Banque Centrale Européenne (BCE)",role:"Traineeship — International Macroeconomics & International Finance",loc:"Francfort",dur:"4–6 mois (extensible 12 mois)",type:"off",tl:"Traineeship — automne 2026",date:"Automne 2026 — Francfort",
+desc:"Travaux de recherche en macroéconomie internationale et finance internationale à la BCE. Solide profil quantitatif et compétences en programmation requis. Rémunéré ~1 170 €/mois.",
+skills:["Macroéconomie","Finance internationale","Économétrie","R/Python","DSGE"],
+url:"https://talent.ecb.europa.eu/careers/JobDetail/Traineeship-in-International-Macroeconomics-and-International-Finance/2744"},
+
+{cat:"institution",icon:"🌐",company:"Banque Centrale Européenne (BCE)",role:"Traineeship — International Policy Analysis and Finance",loc:"Francfort",dur:"4–6 mois",type:"off",tl:"Traineeship",date:"Printemps ou automne 2026",
+desc:"Analyse des politiques économiques internationales avec approche quantitative. Background en économétrie, finance quantitative ou sciences des données requis.",
+skills:["Policy analysis","Économétrie","Finance internationale","R/Stata"],
+url:"https://talent.ecb.europa.eu/careers/JobDetail/Traineeship-in-International-Policy-Analysis-and-Finance/12835"},
+
+{cat:"institution",icon:"🌐",company:"Banque Centrale Européenne (BCE)",role:"Traineeship — External Developments Division",loc:"Francfort",dur:"4–6 mois",type:"off",tl:"Traineeship",date:"2026 — Francfort",
+desc:"Analyse des développements économiques externes (croissance mondiale, flux de capitaux, taux de change). Background quantitatif solide et compétences en programmation requis.",
+skills:["Macro externe","Flux de capitaux","Quantitatif","Économie internationale"],
+url:"https://www.impactpool.org/jobs/1178312"},
+
+{cat:"institution",icon:"🌐",company:"BIS — Banque des Règlements Internationaux",role:"Graduate Internship Programme — Monetary & Economic Department",loc:"Bâle, Suisse",dur:"11 mois",type:"off",tl:"Graduate internship — 11 mois",date:"2026 — Bâle",
+desc:"Programme de 11 mois au sein du département Monétaire et Économique de la BIS (banque centrale des banques centrales). Politique monétaire, stabilité financière, économétrie, gestion des risques. Profil académique recherche fortement valorisé.",
+skills:["Politique monétaire","Stabilité financière","Économétrie","Recherche","Python"],
+url:"https://www.impactpool.org/jobs/1204224"},
+
+{cat:"institution",icon:"🌐",company:"BIS — Banque des Règlements Internationaux",role:"Graduate Internship Programme — Financial Stability Board",loc:"Bâle, Suisse",dur:"11 mois",type:"off",tl:"Graduate internship — 11 mois",date:"2026 — Bâle",
+desc:"Programme de 11 mois au sein du Financial Stability Board hébergé à la BIS. Analyse de la stabilité financière mondiale, régulation, modèles de risque systémique. Idéal pour un profil à l'intersection macro/finance quantitative.",
+skills:["Stabilité financière","Régulation","Risque systémique","Économétrie"],
+url:"https://www.heysuccess.com/opportunity/Bank-for-International-Settlements-(BIS)-2026-Graduate-Internship-Programme-(Financial-Stability-Board)-57128"},
+
+{cat:"institution",icon:"🌐",company:"OCDE",role:"Internship Programme (1–6 mois)",loc:"Paris (Boulogne-Billancourt)",dur:"1–6 mois (renouvelable 12 mois)",type:"off",tl:"Flexible — 1 à 6 mois",date:"Délai : 31 déc. 2026 — Paris",
+desc:"Programme de stage de l'OCDE en économie, gouvernance, durabilité, statistiques. Environ 1 000 €/mois de contribution. Stages en présentiel, hybride ou full remote. Idéal pour un profil économétrie/recherche à Paris.",
+skills:["Recherche économique","Statistiques","Politique publique","Économétrie"],
+url:"https://www.oecd.org/en/about/careers/internships.html"}
+
+];
+
+/* ══════════════════════════════════════════════════════════════
+   LOGIC
+══════════════════════════════════════════════════════════════ */
+document.getElementById("total-count").textContent = D.length;
+
+function visible(){
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  return D.filter(d=>{
+    const catOk = cat==="all"||d.cat===cat;
+    const hay = [d.company,d.role,d.loc,d.desc,d.dur,...d.skills].join(" ").toLowerCase();
+    return catOk&&(!q||hay.includes(q));
+  });
+}
+
+function renderCards(items){
+  const g = document.getElementById("grid");
+  if(!items.length){
+    g.innerHTML=`<div class="empty"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><p>Aucune offre ne correspond à cette recherche.</p></div>`;
+    return;
+  }
+  const start=(page-1)*PER, slice=items.slice(start,start+PER);
+  g.innerHTML=slice.map(d=>{
+    const tc = d.type==="off"?"t-off":"t-sum";
+    return `<div class="card">
+      <div class="card-top">
+        <div class="card-title"><div class="company">${d.company}</div><div class="role">${d.role}</div></div>
+        <div class="cat-icon">${d.icon}</div>
+      </div>
+      <div class="tags">
+        <span class="tag t-loc">📍 ${d.loc}</span>
+        <span class="tag t-dur">⏱ ${d.dur}</span>
+        <span class="tag ${tc}">${d.tl}</span>
+      </div>
+      <div class="desc">${d.desc}</div>
+      <div class="skills">${d.skills.map(s=>`<span class="skill">${s}</span>`).join("")}</div>
+      <div class="card-foot">
+        <div class="date-label">🗓 ${d.date}</div>
+        <a href="${d.url}" target="_blank" rel="noopener" class="btn-apply">Voir l'offre ↗</a>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function renderPag(total){
+  const pages=Math.ceil(total/PER), pag=document.getElementById("pag");
+  if(pages<=1){pag.innerHTML="";return;}
+  let h=`<button class="pgb" onclick="go(${page-1})" ${page===1?"disabled":""}>‹</button>`;
+  const r=[];
+  for(let i=1;i<=pages;i++){
+    if(i===1||i===pages||Math.abs(i-page)<=1) r.push(i);
+    else if(r[r.length-1]!=="…") r.push("…");
+  }
+  r.forEach(p=>{
+    if(p==="…") h+=`<span class="pg-dots">…</span>`;
+    else h+=`<button class="pgb${p===page?" active":""}" onclick="go(${p})">${p}</button>`;
+  });
+  h+=`<button class="pgb" onclick="go(${page+1})" ${page===pages?"disabled":""}>›</button>`;
+  pag.innerHTML=h;
+}
+
+function renderCount(total){
+  const s=(page-1)*PER+1, e=Math.min(page*PER,total);
+  document.getElementById("tcount").innerHTML=total?`<b>${s}–${e}</b> / <b>${total}</b>`:`<b>0</b> offre`;
+}
+
+function refresh(){
+  page=1;
+  const v=visible();
+  renderCards(v); renderPag(v.length); renderCount(v.length);
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function go(p){
+  const v=visible(), pages=Math.ceil(v.length/PER);
+  if(p<1||p>pages) return;
+  page=p;
+  renderCards(v); renderPag(v.length); renderCount(v.length);
+  document.querySelector(".grid-wrap").scrollIntoView({behavior:"smooth"});
+}
+
+function setF(btn){
+  document.querySelectorAll(".fbtn").forEach(b=>b.classList.remove("on"));
+  btn.classList.add("on"); cat=btn.dataset.f; refresh();
+}
+
+refresh();
+</script>
+</body>
+</html>
