@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stages Défense — IA &amp; Simulation — Europe 2026</title>
+  <style>
+    :root {
+      --bg: #0b0f0c;
+      --surface: #121a14;
+      --surface2: #1b2620;
+      --border: #2c3a30;
+      --accent: #5fb87a;
+      --accent-dim: #163020;
+      --green: #3fb950;
+      --green-dim: #1a3a24;
+      --orange: #f0883e;
+      --orange-dim: #3d2208;
+      --purple: #bc8cff;
+      --purple-dim: #2d1f4e;
+      --teal: #39d0c4;
+      --teal-dim: #0d2b2a;
+      --blue: #58a6ff;
+      --blue-dim: #1f3a5f;
+      --yellow: #e3b341;
+      --yellow-dim: #3d2f05;
+      --text: #e6f0e8;
+      --muted: #93a99a;
+      --muted2: #6e8175;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif; font-size: 14px; line-height: 1.6; min-height: 100vh; }
+
+    /* ── HEADER ── */
+    header { background: linear-gradient(180deg,#121a14 0%,#0b0f0c 100%); border-bottom: 1px solid var(--border); padding: 28px 40px 22px; }
+    .header-nav { margin-bottom: 14px; }
+    .header-nav a { color: var(--muted); text-decoration: none; font-size: 12.5px; border: 1px solid var(--border); padding: 5px 12px; border-radius: 20px; transition: all .15s; }
+    .header-nav a:hover { border-color: var(--accent); color: var(--accent); }
+    header h1 { font-size: 22px; font-weight: 700; letter-spacing: -.5px; }
+    header h1 span { color: var(--accent); }
+    .header-meta { color: var(--muted); font-size: 12px; margin-top: 6px; }
+    .header-meta b { color: var(--text); }
+
+    /* ── TOOLBAR ── */
+    .toolbar { position: sticky; top: 0; z-index: 100; background: rgba(11,15,12,.96); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 12px 40px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .search-wrap { position: relative; flex: 0 0 260px; }
+    .search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted2); pointer-events: none; }
+    .search-wrap input { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 7px 10px 7px 32px; border-radius: 8px; font-size: 13px; outline: none; transition: border-color .15s; }
+    .search-wrap input:focus { border-color: var(--accent); }
+    .search-wrap input::placeholder { color: var(--muted2); }
+    .filters { display: flex; gap: 5px; flex-wrap: wrap; }
+    .fbtn { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 500; transition: all .15s; white-space: nowrap; user-select: none; }
+    .fbtn:hover { border-color: var(--accent); color: var(--accent); }
+    .fbtn.on { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+    .tcount { margin-left: auto; color: var(--muted); font-size: 12px; white-space: nowrap; }
+    .tcount b { color: var(--text); }
+
+    /* ── GRID ── */
+    .grid-wrap { padding: 22px 40px 0; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(360px,1fr)); gap: 14px; }
+
+    /* ── CARD ── */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 11px; transition: border-color .15s,box-shadow .15s,transform .15s; }
+    .card:hover { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent-dim),0 8px 24px rgba(0,0,0,.4); transform: translateY(-2px); }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .card-title { flex: 1; }
+    .company { font-weight: 700; font-size: 14.5px; line-height: 1.3; }
+    .role { color: var(--muted); font-size: 12px; margin-top: 3px; line-height: 1.4; }
+    .cat-icon { width: 34px; height: 34px; border-radius: 8px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+    .tags { display: flex; gap: 5px; flex-wrap: wrap; }
+    .tag { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+    .t-loc  { background: var(--blue-dim);    color: var(--blue); }
+    .t-dur  { background: var(--green-dim);   color: var(--green); }
+    .t-ia   { background: var(--purple-dim);  color: var(--purple); }
+    .t-sim  { background: var(--teal-dim);    color: var(--teal); }
+    .t-mix  { background: var(--yellow-dim);  color: var(--yellow); }
+    .t-tier { background: var(--accent-dim);  color: var(--accent); }
+    .desc { color: var(--muted); font-size: 12.5px; line-height: 1.6; flex: 1; }
+    .skills { display: flex; gap: 4px; flex-wrap: wrap; }
+    .skill { background: var(--surface2); border: 1px solid var(--border); color: var(--muted2); font-size: 11px; padding: 2px 7px; border-radius: 5px; }
+    .card-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); }
+    .date-label { color: var(--muted2); font-size: 11.5px; flex: 1; line-height: 1.4; }
+    .btn-apply { display: inline-flex; align-items: center; gap: 4px; text-decoration: none; padding: 6px 13px; border-radius: 7px; font-size: 12px; font-weight: 600; white-space: nowrap; flex-shrink: 0; transition: all .15s; background: var(--accent); color: #0b0f0c; }
+    .btn-apply:hover { background: #7fd199; }
+
+    /* ── PAGINATION ── */
+    .pag-wrap { padding: 28px 40px 48px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    .pgb { min-width: 34px; height: 34px; padding: 0 8px; background: var(--surface2); border: 1px solid var(--border); color: var(--muted); border-radius: 7px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; justify-content: center; transition: all .15s; user-select: none; }
+    .pgb:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+    .pgb.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); font-weight: 700; }
+    .pgb:disabled { opacity: .35; cursor: default; }
+    .pg-dots { color: var(--muted2); padding: 0 2px; align-self: center; font-size: 13px; }
+
+    /* ── EMPTY ── */
+    .empty { grid-column: 1/-1; padding: 60px 20px; text-align: center; color: var(--muted); }
+    .empty p { font-size: 15px; margin-top: 12px; }
+
+    @media (max-width: 700px) {
+      header,.toolbar,.grid-wrap,.pag-wrap { padding-left: 16px; padding-right: 16px; }
+      .grid { grid-template-columns: 1fr; }
+      .search-wrap { flex: 1 1 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-nav"><a href="../">← Stages Finance Quantitatif</a></div>
+  <h1>Stages <span>Défense</span> — IA &amp; Simulation numérique — Europe 2026</h1>
+  <p class="header-meta">
+    Profil : <b>Grande école · Maths app · IA · Programmation</b> &nbsp;·&nbsp;
+    Thème : <b>IA &amp; Simulation numérique</b> &nbsp;·&nbsp;
+    Durée : <b>Césure / stage ~6 mois</b> &nbsp;·&nbsp;
+    Début : <b>août – oct. 2026</b> &nbsp;·&nbsp;
+    <b id="total-count">…</b> offres
+  </p>
+</header>
+
+<div class="toolbar">
+  <div class="search-wrap">
+    <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input id="q" type="text" placeholder="Entreprise, ville, compétence…" oninput="refresh()" />
+  </div>
+  <div class="filters" id="filters">
+    <button class="fbtn on" data-f="all"      onclick="setF(this)">Tout</button>
+    <button class="fbtn"    data-f="groupe"    onclick="setF(this)">🛡 Grands groupes</button>
+    <button class="fbtn"    data-f="startup"   onclick="setF(this)">🚀 Startups &amp; PME</button>
+    <button class="fbtn"    data-f="etat"      onclick="setF(this)">🏛 Étatique &amp; Recherche</button>
+    <button class="fbtn"    data-f="ia"        onclick="setF(this)">🧠 Thème IA</button>
+    <button class="fbtn"    data-f="sim"       onclick="setF(this)">🌐 Thème Simulation</button>
+  </div>
+  <div class="tcount" id="tcount"></div>
+</div>
+
+<div class="grid-wrap"><div class="grid" id="grid"></div></div>
+<div class="pag-wrap" id="pag"></div>
+
+<script>
+const PER = 9;
+let cat = "all", page = 1;
+
+/* ══════════════════════════════════════════════════════════════
+   DATA  — Stages Défense IA & Simulation
+   cat   : groupe | startup | etat
+   theme : ia | sim | mix      (filtres 🧠 / 🌐 ciblent ce champ)
+══════════════════════════════════════════════════════════════ */
+const D = [
+
+/* ──────────── P1 · GRANDS GROUPES DE DÉFENSE ──────────── */
+{cat:"groupe",theme:"ia",icon:"🛡",company:"Thales",role:"STAGE — Développement & intégration d'un outil IA dans une chaîne MLOps (H/F) — 6 mois",loc:"Palaiseau",dur:"6 mois",tier:"P1 · Groupe",th:"IA",thc:"t-ia",date:"6 mois — Palaiseau (cortAIx)",
+desc:"Au sein de cortAIx, le hub IA de Thales (800+ experts). Développement et intégration d'un outil dans une chaîne MLOps complète : entraînement, déploiement, monitoring de modèles. Base solide Python/Linux. Cœur de l'IA industrielle de défense.",
+skills:["Python","MLOps","Linux","Machine Learning","CI/CD"],
+url:"https://careers.thalesgroup.com/fr/fr/job/R0306189/STAGE-Ing%C3%A9nieur-D%C3%A9veloppement-et-int%C3%A9gration-d-un-outil-IA-dans-une-chaine-MLOPS-H-F-6-mois"},
+
+{cat:"groupe",theme:"ia",icon:"🛡",company:"Thales",role:"STAGE — IA & Robotique : coordination de systèmes multi-agents autonomes (H/F) — 6 mois",loc:"Palaiseau",dur:"6 mois",tier:"P1 · Groupe",th:"IA",thc:"t-ia",date:"6 mois — Centre de recherche IA",
+desc:"Au centre de recherche en IA de Thales. Développement d'un algorithme de coordination dynamique pour l'allocation de tâches dans un essaim (drones, robotique). Apprentissage par renforcement, planification distribuée. Profil maths/IA pointu.",
+skills:["IA","Reinforcement Learning","Systèmes multi-agents","Robotique","Python"],
+url:"https://careers.thalesgroup.com/fr/fr/job/R0304796/STAGE-Ing%C3%A9nieur-en-Intelligence-Artificielle-et-Robotique-IA-pour-la-coordination-de-syst%C3%A8mes-multi-agents-autonomes-H-F-6-mois"},
+
+{cat:"groupe",theme:"ia",icon:"🛡",company:"Thales",role:"Stage Césure — IA Embarquée pour radar militaire (F/H)",loc:"Limours",dur:"Césure ~6 mois",tier:"P1 · Groupe",th:"IA",thc:"t-ia",date:"Césure — Limours",
+desc:"Stage de césure explicite. IA embarquée pour le traitement temps réel des signaux radar militaires : détection, classification de cibles, optimisation sous contrainte de ressources. Très bon profil signal + deep learning.",
+skills:["IA embarquée","Traitement du signal","Radar","Deep Learning","C++/Python"],
+url:"https://fr.linkedin.com/jobs/view/stage-c%C3%A9sure-ia-embarqu%C3%A9e-radar-militaire-f-h-at-thales-4373995735"},
+
+{cat:"groupe",theme:"ia",icon:"🛡",company:"Thales — Cholet",role:"STAGE — Développement de Formes d'Ondes par orchestration d'Agents IA (F/H)",loc:"Cholet (49)",dur:"Stage (4–6 mois)",tier:"P1 · Groupe",th:"IA",thc:"t-ia",date:"Cholet — communications tactiques",
+desc:"Sur le site Thales de Cholet (radiocommunications de défense). Mise en place d'agents IA pour accélérer les premières étapes de la couche protocolaire d'une forme d'onde. Sujet à la croisée IA générative / agents et télécommunications militaires.",
+skills:["Agents IA","Formes d'ondes","Télécom","Python","LLM/Agents"],
+url:"https://careers.thalesgroup.com/fr/fr/job/R0306456/STAGE-Ing%C3%A9nieur-D%C3%A9veloppement-Formes-d-Ondes-par-orchestration-d-Agents-IA-F-H"},
+
+{cat:"groupe",theme:"ia",icon:"🛡",company:"Thales",role:"STAGE — Attaque adversariale sur des modèles de détection utilisant des vues aériennes (H/F) — 6 mois",loc:"Île-de-France",dur:"6 mois",tier:"P1 · Groupe",th:"IA",thc:"t-ia",date:"6 mois — IA de confiance",
+desc:"Robustesse et sécurité de l'IA : génération d'attaques adversariales contre des modèles de détection d'objets sur imagerie aérienne, et stratégies de défense. Sujet de recherche très en vogue (IA de confiance pour la défense).",
+skills:["Adversarial ML","Computer Vision","Deep Learning","Robustesse","PyTorch"],
+url:"https://careers.thalesgroup.com/fr/fr/job/R0316173/STAGE-Ing%C3%A9nieur-sur-sujet-d%E2%80%99Attaque-adversariale-sur-des-mod%C3%A8les-de-d%C3%A9tection-utilisant-des-vues-a%C3%A9riennes-H-F-6-mois"},
+
+{cat:"groupe",theme:"ia",icon:"🛡",company:"Thales",role:"STAGE — Prédiction des performances d'un algo de deep learning en computer vision (F/H)",loc:"Élancourt",dur:"6 mois",tier:"P1 · Groupe",th:"IA",thc:"t-ia",date:"6 mois — Élancourt",
+desc:"Étude de la prédiction des performances d'algorithmes de deep learning en vision par ordinateur (détection/reconnaissance). Caractérisation, métriques, robustesse des modèles. Idéal pour un profil data science / vision.",
+skills:["Computer Vision","Deep Learning","Python","Évaluation de modèles","Stats"],
+url:"https://communityjobs.arist.co/companies/thales-2/jobs/61392300-stage-prediction-des-performances-d-un-algo-de-deep-learning-en-computer-vision-f-h"},
+
+{cat:"groupe",theme:"sim",icon:"🛡",company:"Thales",role:"Stage — Jumeau Numérique (F/H), Pôle Mécanique Marine",loc:"Brest",dur:"Stage (4–6 mois)",tier:"P1 · Groupe",th:"Simulation",thc:"t-sim",date:"4–6 mois — Brest",
+desc:"Construction d'un jumeau numérique au sein du Pôle Mécanique Marine. Modélisation physique, simulation numérique de systèmes mécaniques, couplage données/modèle. École d'ingénieurs ou équivalent.",
+skills:["Jumeau numérique","Simulation","Modélisation physique","Mécanique","Python"],
+url:"https://www.twinplus.fr/offerings/19e707c6-57c7-ee11-85fa-0022488a6322/thales-stage-jumeau-numerique-f-h-"},
+
+{cat:"groupe",theme:"ia",icon:"🛡",company:"Thales",role:"STAGE CÉSURE — Développement d'algorithmes d'optimisation et d'ordonnancement (F/H)",loc:"Châtellerault (86)",dur:"Césure ~6 mois",tier:"P1 · Groupe",th:"IA",thc:"t-ia",date:"Césure — Châtellerault",
+desc:"Stage de césure en recherche opérationnelle / IA : analyse des besoins métier, modélisation du problème sous forme de satisfaction/optimisation de contraintes (CSP/COP), résolution et ordonnancement. Excellent pour un profil maths app + optimisation.",
+skills:["Optimisation","Recherche opérationnelle","CSP/COP","Algorithmique","Python"],
+url:"https://careers.thalesgroup.com/fr/fr/job/R0316605/STAGE-CESURE-Ing%C3%A9nieur-d%C3%A9veloppement-d-algorithmes-d-optimisation-et-d-ordonnancement-F-H"},
+
+{cat:"groupe",theme:"ia",icon:"🛰",company:"Airbus Defence and Space",role:"STAGE 2026 — Contribution à un environnement d'aide à l'ingénierie basé sur l'IA (H/F)",loc:"Élancourt / Toulouse",dur:"6 mois",tier:"P1 · Groupe",th:"IA",thc:"t-ia",date:"2026 — 6 mois",
+desc:"Conception d'un environnement d'aide à l'ingénierie système exploitant l'IA générative et le NLP (assistants, recherche sémantique, automatisation de tâches d'ingénierie) au sein d'Airbus Defence and Space.",
+skills:["IA générative","NLP","LLM","Python","Ingénierie système"],
+url:"https://youllgetit.eu/internships/dc5397d5-4dd7-52be-89e6-5eead336ebdf/stage-2026-contribution-un-environnement-daide-lingenierie-bas-sur-lia-hf-at-airbus-defence-and-spac"},
+
+{cat:"groupe",theme:"mix",icon:"🛰",company:"Airbus Defence and Space",role:"VIE — Study Engineer : Simulation & Artificial Intelligence (d/f/m)",loc:"Allemagne (VIE)",dur:"VIE (12–24 mois)",tier:"P1 · Groupe",th:"IA + Simu",thc:"t-mix",date:"VIE — début flexible",
+desc:"Volontariat International en Entreprise (VIE) à l'intersection simulation numérique et IA pour les systèmes de défense/spatiaux. Format idéal post-césure ou fin d'études, rémunéré, ouvert aux profils UE. Modélisation + ML.",
+skills:["Simulation","IA","Modélisation","Python","Systèmes complexes"],
+url:"https://ag.wd3.myworkdayjobs.com/en-US/Airbus/job/VIE-Study-Engineer--d-f-m----Simulation---Artificial-Intelligence--AI-_JR10398587"},
+
+{cat:"groupe",theme:"ia",icon:"🛡",company:"Safran.AI (ex-Preligens)",role:"Stage — Deep Learning Scientist (H/F)",loc:"Paris · Rennes",dur:"Stage de fin d'études (~6 mois)",tier:"P1 · Groupe",th:"IA",thc:"t-ia",date:"Paris / Rennes — ~6 mois",
+desc:"Safran.AI (ex-Preligens) est le leader français de l'IA géospatiale pour la défense (détection d'équipements militaires sur imagerie satellite). Stage deep learning / computer vision : entraînement et industrialisation de modèles. Première IA qualifiée pour la défense en France.",
+skills:["Deep Learning","Computer Vision","Imagerie satellite","PyTorch","Python"],
+url:"https://jobs.lever.co/safran-ai"},
+
+{cat:"groupe",theme:"mix",icon:"🚀",company:"ArianeGroup",role:"STAGE — Ingénieur·e IA / Machine Learning appliqué à un code de calcul",loc:"Les Mureaux",dur:"Stage (~6 mois)",tier:"P1 · Groupe",th:"IA + Simu",thc:"t-mix",date:"Les Mureaux — dissuasion & Ariane 6",
+desc:"ArianeGroup (coentreprise Airbus/Safran) conçoit les lanceurs et la composante balistique de la dissuasion (missile M51). Stage à l'interface IA / simulation : application du machine learning à un code de calcul scientifique (accélération, surrogate models, optimisation).",
+skills:["Machine Learning","Code de calcul","Simulation","Python","Calcul scientifique"],
+url:"https://fr.linkedin.com/jobs/view/stage-ing%C3%A9nieure-ing%C3%A9nieur-ia-machine-learning-appliqu%C3%A9-%C3%A0-un-code-calcul-at-arianegroup-4383926118"},
+
+{cat:"groupe",theme:"ia",icon:"✈",company:"Dassault Aviation",role:"Site d'offres — Stages IA & deep learning (Rafale, nEURON, BE)",loc:"Saint-Cloud · Mérignac · Istres",dur:"Stages 4–6 mois (~500/an)",tier:"P1 · Groupe",th:"IA",thc:"t-ia",date:"Moteur d'offres — taper « stage » + « IA »",
+desc:"Dassault Aviation propose ~500 stages/an. Sur l'espace candidat officiel (Talentsoft), rechercher « stage » + IA / deep learning / data science : sujets de vision, maintenance prédictive, IA pour l'ingénierie aéronautique militaire. Postuler directement en ligne.",
+skills:["IA","Deep Learning","Data Science","Aéronautique","Python"],
+url:"https://dassault-aviation-cand.talent-soft.com/"},
+
+{cat:"groupe",theme:"sim",icon:"✈",company:"Dassault Aviation",role:"Site d'offres — Stages Simulation numérique (CFD, aérodynamique, structures)",loc:"Saint-Cloud · Mérignac · Argonay",dur:"Stages 4–6 mois",tier:"P1 · Groupe",th:"Simulation",thc:"t-sim",date:"Moteur d'offres — taper « simulation »",
+desc:"Sur le même espace candidat, filtrer « simulation » / « CFD » : nombreux stages en aérodynamique numérique, mécanique des structures, calcul haute performance et couplage IA-simulation pour la conception des avions de combat (Rafale, démonstrateurs).",
+skills:["Simulation numérique","CFD","Aérodynamique","Calcul scientifique","Mécanique"],
+url:"https://dassault-aviation-cand.talent-soft.com/"},
+
+{cat:"groupe",theme:"ia",icon:"🚀",company:"MBDA",role:"Computer Vision & Artificial Intelligence Engineer — Summer Placement 2026",loc:"Royaume-Uni (Bristol / Stevenage)",dur:"Placement été 2026",tier:"P1 · Groupe",th:"IA",thc:"t-ia",date:"Été 2026 — UK",
+desc:"Placement chez le leader européen du missile. Vision par ordinateur et IA appliquées à la détection/reconnaissance de cibles, au guidage et à l'autonomie. Environnement très technique, forte composante recherche appliquée.",
+skills:["Computer Vision","IA","Détection de cibles","Python","C++"],
+url:"https://www.brightnetwork.co.uk/graduate-jobs/mbda/computer-vision-and-artificial-intelligence-engineer-summer-placement-2026"},
+
+{cat:"groupe",theme:"sim",icon:"🚀",company:"MBDA France",role:"Moteur d'offres — Stages Simulations Numériques & Missile Dynamics",loc:"Le Plessis-Robinson · Bourges",dur:"Stages 4–6 mois",tier:"P1 · Groupe",th:"Simulation",thc:"t-sim",date:"+1 500 postes en France en 2026",
+desc:"MBDA ouvre 1 500+ postes en France en 2026 (dont 500 alternances/CDD/stages). Sur le moteur d'offres officiel, filtrer « stage » + « simulation » : conception de modèles de simulation numérique, dynamique du missile (6 DDL), simulation de vol, IA.",
+skills:["Simulation","Modélisation","Dynamique du vol","Matlab/Python","IA"],
+url:"https://www.mbda-systems.com/country-fr/careers/job-vacancies"},
+
+{cat:"groupe",theme:"mix",icon:"⚓",company:"Naval Group",role:"Espace candidats — Stages IA, simulation & algorithmie (jumeaux numériques, drones, torpilles)",loc:"Ollioules · Nantes · Bouguenais",dur:"Stages 4–6 mois",tier:"P1 · Groupe",th:"IA + Simu",thc:"t-mix",date:"Offres P2026-… — recherche live",
+desc:"Leader européen du naval de défense. Stages R&D : simulateurs intégrant des algorithmes métiers, IA pour l'autonomie (drones, torpilles, mines), jumeaux numériques de navires, CFD/thermohydraulique. Naval Group est entré au capital de cortAIx (IA souveraine avec Thales).",
+skills:["Simulation","IA","Algorithmie","Jumeaux numériques","Python/C++"],
+url:"https://www.naval-group.com/en/candidates"},
+
+{cat:"groupe",theme:"mix",icon:"🛡",company:"KNDS France (Nexter)",role:"Moteur d'offres — Stages IA, data & simulation (défense terrestre)",loc:"Bourges · Versailles-Satory",dur:"Stages 4–6 mois",tier:"P1 · Groupe",th:"IA + Simu",thc:"t-mix",date:"Recherche live — taper « stage »",
+desc:"KNDS France (ex-Nexter), champion de la défense terrestre (Caesar, Leclerc, Jaguar). Stages en simulation (lois de commande du feu, dynamique véhicule), data lakehouse et IA. Partenariat VRAI pour la simulation & la donnée de performance humaine.",
+skills:["Simulation","Lois de commande","IA","Data","Modélisation"],
+url:"https://recrutement.knds.fr/"},
+
+{cat:"groupe",theme:"mix",icon:"📡",company:"HENSOLDT France",role:"Job board — Stages IA & simulation (capteurs, radar, GhostPlay)",loc:"Plaisir · Massy · Toulouse",dur:"Stages / working student",tier:"P1 · Groupe (DE/FR)",th:"IA + Simu",thc:"t-mix",date:"jobs.hensoldt.net — filtrer France",
+desc:"HENSOLDT, champion européen des capteurs de défense (radars, optronique, guerre électronique). Le hub France est centré sur la simulation, l'intégration système et la cyber. Projet GhostPlay : IA pour l'aide à la décision militaire. Stages IA / data / simulation — filtrer « France » sur le board.",
+skills:["IA","Simulation","Radar/Capteurs","Data Science","Python"],
+url:"https://jobs.hensoldt.net/"},
+
+{cat:"groupe",theme:"mix",icon:"🛡",company:"Rheinmetall",role:"Students — Internships & working student (IA, simulation, training systems)",loc:"Allemagne (multi-sites)",dur:"Stages / working student",tier:"P1 · Groupe (DE)",th:"IA + Simu",thc:"t-mix",date:"Allemagne — campagne continue",
+desc:"Rheinmetall, l'un des plus grands groupes de défense européens (véhicules, munitions, systèmes). Forte activité de simulation et d'entraînement (simulateurs) et d'IA pour les systèmes de combat. Programmes stages / working student / thèses ouverts aux étudiants (allemand souvent utile).",
+skills:["IA","Simulation","Systèmes de combat","Modélisation","Python/C++"],
+url:"https://www.rheinmetall.com/en/career/entry-opportunities/students"},
+
+/* ──────────── P2 · STARTUPS & PME DÉFENSE ──────────── */
+{cat:"startup",theme:"ia",icon:"🚀",company:"Helsing",role:"Software Engineer Intern — Applied Machine Learning",loc:"Paris · Munich · Londres",dur:"10–12 sem. — dès juin 2026",tier:"P2 · Startup",th:"IA",thc:"t-ia",date:"Été 2026 — 10–12 semaines",
+desc:"Helsing est LA licorne européenne de l'IA de défense (~18 Mds $, bureau à Paris). Stage ML appliqué : systèmes autonomes, fusion de données capteurs, perception. Partenariat avec Mistral AI pour des systèmes militaires. Mission-driven, très haut niveau technique.",
+skills:["Machine Learning","Systèmes autonomes","Python/Rust","Perception","Fusion de données"],
+url:"https://jobs.generalcatalyst.com/companies/helsing-2/jobs/43780105-software-engineer-intern-applied-machine-learning"},
+
+{cat:"startup",theme:"ia",icon:"🚀",company:"Helsing",role:"AI Research Intern — Optimisation & Control",loc:"Paris · Munich · Londres",dur:"Stage 2026",tier:"P2 · Startup",th:"IA",thc:"t-ia",date:"2026 — Europe",
+desc:"Track recherche d'Helsing centrée optimisation et contrôle pour systèmes autonomes : commande optimale, RL, planification de trajectoires sous contraintes. Profil maths appliquées / contrôle / RL idéal.",
+skills:["Optimisation","Contrôle optimal","Reinforcement Learning","Maths app","Python"],
+url:"https://builtin.com/job/optimisation-control-intern/3218875"},
+
+{cat:"startup",theme:"sim",icon:"🚀",company:"Helsing",role:"Aerodynamic UAV Simulation Engineer — opportunités (intern / working student)",loc:"Munich",dur:"Stage / working student",tier:"P2 · Startup",th:"Simulation",thc:"t-sim",date:"Munich — drones (HX-2)",
+desc:"Helsing développe ses propres drones (essaims HX-2). Sujets de simulation aérodynamique des UAV : modélisation de vol, jumeaux de simulation pour entraîner l'IA sur des millions d'itérations. Suivre la page carrières pour les postes intern / working student.",
+skills:["Simulation aérodynamique","UAV/Drones","CFD","Modélisation de vol","Python"],
+url:"https://helsing.ai/careers"},
+
+{cat:"startup",theme:"ia",icon:"🚀",company:"Mistral AI",role:"Applied Scientist / Research Engineer (Internship)",loc:"Paris · Londres",dur:"Stage",tier:"P2 · Startup",th:"IA",thc:"t-ia",date:"Paris / Londres",
+desc:"Le champion européen des LLM. Stage en pré-entraînement, post-entraînement et déploiement de modèles à l'état de l'art. Mistral a annoncé un partenariat avec Helsing pour développer des systèmes d'IA à usage militaire — angle défense réel.",
+skills:["LLM","Deep Learning","Pré-entraînement","PyTorch","GPU"],
+url:"https://jobs.lever.co/mistral/426ef8c0-eb26-4004-a690-f33c62b445a7"},
+
+{cat:"startup",theme:"ia",icon:"🎯",company:"Comand AI",role:"Candidatures — IA militaire / aide à la décision (logiciel Prevail)",loc:"Paris",dur:"Stage / candidature",tier:"P2 · Startup",th:"IA",thc:"t-ia",date:"Paris — startup en forte croissance",
+desc:"Start-up française d'IA militaire (levée Eurazeo), positionnée face à Palantir avec son logiciel Prevail de command & control augmenté par l'IA (aide à la décision opérationnelle). Suivre les offres de stage data/IA sur LinkedIn.",
+skills:["IA","Aide à la décision","Command & Control","Python","Data"],
+url:"https://fr.linkedin.com/company/comand-ai/jobs/"},
+
+{cat:"startup",theme:"mix",icon:"⚓",company:"Exail (ex-iXblue / ECA Group)",role:"Job board — Stages robotique, navigation autonome & IA (drones marins / AUV)",loc:"La Garde · Saint-Germain-en-Laye",dur:"Stages (filtre dédié)",tier:"P2 · ETI",th:"IA + Simu",thc:"t-mix",date:"jobs.exail.com — filtre « Stage »",
+desc:"Exail (fusion iXblue + ECA Group) : robotique maritime, navigation inertielle, drones sous-marins autonomes (AUV de nouvelle génération commandés par la DGA). Stages en algorithmes GNC, traitement du signal, IA et simulation. Filtre « Stage » disponible sur le board.",
+skills:["Navigation autonome","GNC","Traitement du signal","IA","Robotique"],
+url:"https://jobs.exail.com/fr/annonces"},
+
+{cat:"startup",theme:"ia",icon:"🛰",company:"Unseenlabs",role:"Offres d'emploi — Data science / traitement du signal RF (surveillance maritime)",loc:"Rennes",dur:"Stage / candidature",tier:"P2 · Scale-up",th:"IA",thc:"t-ia",date:"Rennes — deep-tech spatiale",
+desc:"Scale-up française leader du renseignement par radiofréquence depuis l'espace (détection de navires « sombres »). Sujets data science / traitement du signal / IA sur signaux RF satellites. Suivre les offres de stage sur leur page LinkedIn.",
+skills:["Traitement du signal","RF","Data Science","IA","Spatial"],
+url:"https://fr.linkedin.com/company/unseenlabs/jobs/"},
+
+{cat:"startup",theme:"sim",icon:"🛰",company:"Exotrail",role:"Candidatures — Simulation & mission analysis (logistique spatiale, contrats AID)",loc:"Massy · Toulouse",dur:"Stage / candidature",tier:"P2 · Scale-up",th:"Simulation",thc:"t-sim",date:"Massy / Toulouse",
+desc:"Scale-up de mobilité spatiale (French Tech Next40). A signé avec l'Agence de l'Innovation de Défense (AID) un contrat de logiciel de simulation et d'analyse de mission pour le Commandement de l'Espace. Sujets simulation orbitale, optimisation de trajectoires.",
+skills:["Simulation orbitale","Optimisation","Mécanique spatiale","Python","Mission analysis"],
+url:"https://fr.linkedin.com/company/exotrail/jobs/"},
+
+{cat:"startup",theme:"ia",icon:"🚁",company:"Parrot",role:"Careers — Stages Computer Vision / Deep Learning embarqué (drones)",loc:"Paris (10e)",dur:"Stages 4–6 mois",tier:"P2 · ETI",th:"IA",thc:"t-ia",date:"parrot.com/jobs — drones ANAFI/USA",
+desc:"Parrot, leader européen du drone professionnel (microdrones ANAFI utilisés par les forces armées). Sujets de stage en computer vision, deep learning embarqué, odométrie visuelle et autonomie de vol. Forte culture R&D, dual-use civil/défense. Filtrer « stage » sur le board carrières.",
+skills:["Computer Vision","Deep Learning embarqué","Drones","Odométrie","Python/C++"],
+url:"https://www.parrot.com/en/jobs"},
+
+{cat:"startup",theme:"ia",icon:"🔭",company:"Exosens (ex-Photonis)",role:"Job board — Stages traitement d'image & IA (optronique, vision nocturne)",loc:"Mérignac · Brive",dur:"Stages 4–6 mois",tier:"P2 · ETI",th:"IA",thc:"t-ia",date:"Exosens careers — France",
+desc:"Exosens (ex-Photonis), ETI cotée leader mondial de l'amplification, la détection et l'imagerie (vision nocturne, infrarouge, intensificateurs). Momentum défense très fort. Stages en traitement d'image, IA pour l'imagerie et la détection. Offres France sur le board carrières.",
+skills:["Traitement d'image","IA","Optronique","Vision nocturne/IR","Python"],
+url:"https://www.exosens.com/careers/job-offers"},
+
+{cat:"startup",theme:"mix",icon:"🌊",company:"Diodon Drone Technology",role:"Careers — Stages autonomie / IA & systèmes (drones maritimes)",loc:"Bidart (Pays basque)",dur:"Stage / candidature",tier:"P2 · PME",th:"IA + Simu",thc:"t-mix",date:"PME drones maritimes",
+desc:"Diodon conçoit des drones aériens étanches et systèmes pour environnements maritimes exigeants (Marine, sécurité). Sujets autour de l'autonomie, du traitement d'images, de la navigation et de la simulation de systèmes. Environnement ingénierie dynamique, PME en croissance.",
+skills:["Autonomie","Computer Vision","Navigation","Drones maritimes","Python"],
+url:"https://www.diodon-drone.com/careers/"},
+
+{cat:"startup",theme:"mix",icon:"💎",company:"Les Pépites Tech",role:"Annuaire — Collection Défense (startups & PME qui recrutent)",loc:"France",dur:"Annuaire d'employeurs",tier:"P2 · Annuaire",th:"IA + Simu",thc:"t-mix",date:"Veille — mise à jour continue",
+desc:"Annuaire de référence des start-ups et PME tech de la défense française (drones, IA, spatial, cyber). Point de départ idéal pour identifier des employeurs P2 en croissance qui publient des stages IA / simulation tout au long de l'année.",
+skills:["Veille","Startups défense","IA","Spatial","Drones"],
+url:"https://lespepitestech.com/startup-collection/defense"},
+
+/* ──────────── P3 · ÉTATIQUE & RECHERCHE ──────────── */
+{cat:"etat",theme:"mix",icon:"🏛",company:"DGA — Direction Générale de l'Armement",role:"Stage — Développement prototype & simulation en guerre électronique aéroportée",loc:"Bruz (Rennes)",dur:"Stage",tier:"P3 · Étatique",th:"IA + Simu",thc:"t-mix",date:"DGA Maîtrise de l'Information",
+desc:"Au sein de DGA Maîtrise de l'Information. Développement de prototypes et de simulations en guerre électronique aéroportée : modélisation de capteurs, traitement du signal, IA. Candidature via le portail emploi de la fonction publique (PASS).",
+skills:["Simulation","Guerre électronique","Traitement du signal","IA","Prototypage"],
+url:"https://www.pass.fonction-publique.gouv.fr/offre/dgamaitrise-de-linformationdeveloppement-prototype-et-simulation-en-ge-aeroportee"},
+
+{cat:"etat",theme:"ia",icon:"🏛",company:"Ministère des Armées — DGA",role:"Book de Stages 2026 — Numérique, Cyber & IA (catalogue d'offres)",loc:"Bruz · Paris · Rennes",dur:"Stages 2026",tier:"P3 · Étatique",th:"IA",thc:"t-ia",date:"Catalogue prévisionnel 2026 (PDF)",
+desc:"Catalogue officiel des opportunités de stage 2026 des sous-directions Numérique, Cyber Offensive & Cyberdéfense de la DGA/Ministère des Armées. Liste de sujets concrets en IA, data, traitement du signal et simulation — avec contacts pour postuler.",
+skills:["IA","Data Science","Cyber","Traitement du signal","Simulation"],
+url:"https://www.defense.gouv.fr/sites/default/files/dga/2026_BOOK_Stages_MI_Cyber%20V1.pdf"},
+
+{cat:"etat",theme:"ia",icon:"🕵",company:"DRM — Intelligence Campus",role:"Stage Intelligence Campus (IC) — pôle technologique (IA pour le renseignement)",loc:"Creil",dur:"Stage",tier:"P3 · Étatique",th:"IA",thc:"t-ia",date:"Creil — renseignement militaire",
+desc:"L'Intelligence Campus est le pôle d'innovation de la Direction du Renseignement Militaire (DRM), service du 1er cercle. Stages sur l'axe technologies : IA, data science, traitement automatique des données de renseignement (images, signaux, texte). Candidature via le portail PASS.",
+skills:["IA","Data Science","Traitement de données","NLP/Vision","Python"],
+url:"https://www.pass.fonction-publique.gouv.fr/offre/stage-intelligence-campus-ic-pole-technologique"},
+
+{cat:"etat",theme:"ia",icon:"🔬",company:"ONERA — DTIS",role:"Stage DTIS-2026-67 — Détection de traînées de condensation dans l'imagerie par Deep Learning",loc:"Palaiseau / Toulouse",dur:"Fin d'études Bac+5",tier:"P3 · Recherche",th:"IA",thc:"t-ia",date:"Stage M2 / fin d'études",
+desc:"Département Traitement de l'Information et Systèmes de l'ONERA. Détection automatique de traînées de condensation (contrails) dans l'imagerie par deep learning, et association à des trajectoires d'avions. Sujet vision + données aéro très concret.",
+skills:["Deep Learning","Computer Vision","Imagerie","Python","Recherche"],
+url:"https://w3.onera.fr/stages/fr/stages-dtis"},
+
+{cat:"etat",theme:"mix",icon:"🔬",company:"ONERA — DEMR",role:"Stage DEMR-2026-04 — Correction de Modèles Numériques de Terrain à l'aide de Deep Learning",loc:"Palaiseau / Toulouse",dur:"Fin d'études Bac+5",tier:"P3 · Recherche",th:"IA + Simu",thc:"t-mix",date:"Stage M2 / fin d'études",
+desc:"Département Électromagnétisme et Radar de l'ONERA. Correction de Modèles Numériques de Terrain (MNT) par deep learning, à l'interface entre simulation/radar et apprentissage. Idéal pour un profil maths app + IA + physique.",
+skills:["Deep Learning","Simulation","Radar/EM","Géospatial","Python"],
+url:"https://w3.onera.fr/stages/fr/stages-demr"},
+
+{cat:"etat",theme:"mix",icon:"⚛",company:"CEA-DAM",role:"Livret offres de stages 2026 — Simulation numérique directe & Machine Learning (HPC)",loc:"Bruyères-le-Châtel · Arpajon",dur:"Stages 4–6 mois",tier:"P3 · Étatique",th:"IA + Simu",thc:"t-mix",date:"Livret stages 2026 (PDF)",
+desc:"Direction des Applications Militaires du CEA (dissuasion). Livret 2026 : simulation numérique directe, machine learning, calcul haute performance sur supercalculateurs. Ex. : validation a posteriori de modèles RANS augmentés par ML dans un code CFD.",
+skills:["Simulation numérique","Machine Learning","HPC","CFD","C++/Python"],
+url:"https://www-dam.cea.fr/dam/wp-content/uploads/2025/09/Livret_offres_2026_stages_CEA-DAM.pdf"},
+
+{cat:"etat",theme:"ia",icon:"🏛",company:"Ministère des Armées — Commissariat au Numérique de Défense",role:"Stages & apprentissage du numérique (IA, data)",loc:"Paris · Rennes · Bruz",dur:"Stages / apprentissage",tier:"P3 · Étatique",th:"IA",thc:"t-ia",date:"~250 postes/an",
+desc:"Le numérique de défense recrute stagiaires et apprentis (~250 postes/an) sur des sujets IA, data science, cybersécurité et logiciels souverains pour les armées. Bon point d'entrée institutionnel pour un profil IA.",
+skills:["IA","Data Science","Logiciel","Cyber","Souveraineté"],
+url:"https://www.defense.gouv.fr/cnd/nous-rejoindre/nos-statuts-au-commissariat-au-numerique-defense/stagiaire-apprenti-du-numerique-du-ministere"},
+
+{cat:"etat",theme:"mix",icon:"🇨🇭",company:"armasuisse — Cyber-Defence Campus",role:"Internships & fellowships — IA & Simulation pour la sécurité nationale",loc:"Thoune · Lausanne (Suisse)",dur:"Stage / fellowship",tier:"P3 · Étatique (CH)",th:"IA + Simu",thc:"t-mix",date:"Suisse — armasuisse S+T",
+desc:"Le CYD Campus d'armasuisse Science & Technology transfère la recherche IA en prototypes pour l'Armée suisse, en lien avec le Centre de compétences IA & Simulation (AISI). Stages et fellowships en machine learning, cybersécurité et simulation. Accueille des profils internationaux.",
+skills:["Machine Learning","Simulation","Cyber","Recherche","Python"],
+url:"https://www.cydcampus.admin.ch/en"},
+
+{cat:"etat",theme:"ia",icon:"🔬",company:"The Alan Turing Institute",role:"Defence & National Security Data Science Undergraduate Internship 2026",loc:"Londres",dur:"8 semaines (été)",tier:"P3 · Recherche (UK)",th:"IA",thc:"t-ia",date:"Été 2026 — Londres",
+desc:"Institut national britannique de data science et d'IA. Stage rémunéré de 8 semaines au sein du programme Défense & Sécurité nationale : projets de data science / ML appliqués à des problématiques de défense. Ouverture internationale.",
+skills:["Data Science","Machine Learning","Recherche","Python","Défense"],
+url:"https://www.turing.ac.uk/work-turing/defence-and-national-security-data-science-undergraduate-internship-2026"}
+
+];
+
+/* ══════════════════════════════════════════════════════════════
+   LOGIC
+══════════════════════════════════════════════════════════════ */
+document.getElementById("total-count").textContent = D.length;
+
+const THEME_FILTERS = { ia:1, sim:1, mix:1 };
+
+function visible(){
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  return D.filter(d=>{
+    let catOk;
+    if(cat==="all") catOk = true;
+    else if(THEME_FILTERS[cat]) catOk = (d.theme===cat);   // filtres thème (ia/sim)
+    else catOk = (d.cat===cat);                            // filtres tier (groupe/startup/etat)
+    const hay = [d.company,d.role,d.loc,d.desc,d.dur,d.tier,d.th,...d.skills].join(" ").toLowerCase();
+    return catOk&&(!q||hay.includes(q));
+  });
+}
+
+function renderCards(items){
+  const g = document.getElementById("grid");
+  if(!items.length){
+    g.innerHTML=`<div class="empty"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><p>Aucune offre ne correspond à cette recherche.</p></div>`;
+    return;
+  }
+  const start=(page-1)*PER, slice=items.slice(start,start+PER);
+  g.innerHTML=slice.map(d=>{
+    return `<div class="card">
+      <div class="card-top">
+        <div class="card-title"><div class="company">${d.company}</div><div class="role">${d.role}</div></div>
+        <div class="cat-icon">${d.icon}</div>
+      </div>
+      <div class="tags">
+        <span class="tag t-tier">${d.tier}</span>
+        <span class="tag ${d.thc}">${d.th}</span>
+        <span class="tag t-loc">📍 ${d.loc}</span>
+        <span class="tag t-dur">⏱ ${d.dur}</span>
+      </div>
+      <div class="desc">${d.desc}</div>
+      <div class="skills">${d.skills.map(s=>`<span class="skill">${s}</span>`).join("")}</div>
+      <div class="card-foot">
+        <div class="date-label">🗓 ${d.date}</div>
+        <a href="${d.url}" target="_blank" rel="noopener" class="btn-apply">Voir l'offre ↗</a>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function renderPag(total){
+  const pages=Math.ceil(total/PER), pag=document.getElementById("pag");
+  if(pages<=1){pag.innerHTML="";return;}
+  let h=`<button class="pgb" onclick="go(${page-1})" ${page===1?"disabled":""}>‹</button>`;
+  const r=[];
+  for(let i=1;i<=pages;i++){
+    if(i===1||i===pages||Math.abs(i-page)<=1) r.push(i);
+    else if(r[r.length-1]!=="…") r.push("…");
+  }
+  r.forEach(p=>{
+    if(p==="…") h+=`<span class="pg-dots">…</span>`;
+    else h+=`<button class="pgb${p===page?" active":""}" onclick="go(${p})">${p}</button>`;
+  });
+  h+=`<button class="pgb" onclick="go(${page+1})" ${page===pages?"disabled":""}>›</button>`;
+  pag.innerHTML=h;
+}
+
+function renderCount(total){
+  const s=(page-1)*PER+1, e=Math.min(page*PER,total);
+  document.getElementById("tcount").innerHTML=total?`<b>${s}–${e}</b> / <b>${total}</b>`:`<b>0</b> offre`;
+}
+
+function refresh(){
+  page=1;
+  const v=visible();
+  renderCards(v); renderPag(v.length); renderCount(v.length);
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function go(p){
+  const v=visible(), pages=Math.ceil(v.length/PER);
+  if(p<1||p>pages) return;
+  page=p;
+  renderCards(v); renderPag(v.length); renderCount(v.length);
+  document.querySelector(".grid-wrap").scrollIntoView({behavior:"smooth"});
+}
+
+function setF(btn){
+  document.querySelectorAll(".fbtn").forEach(b=>b.classList.remove("on"));
+  btn.classList.add("on"); cat=btn.dataset.f; refresh();
+}
+
+refresh();
+</script>
+</body>
+</html>
