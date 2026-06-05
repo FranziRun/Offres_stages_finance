@@ -106,9 +106,9 @@
   <h1>Stages Finance <span>Quantitatif</span> — Europe 2026</h1>
   <p class="header-meta">
     Profil : <b>Grande école · Maths app · Programmation · Économétrie</b> &nbsp;·&nbsp;
-    Durée cible : <b>Césure 6 mois</b> &nbsp;·&nbsp;
-    Début : <b>août – nov. 2026</b> &nbsp;·&nbsp;
-    <b id="total-count">…</b> offres · Mis à jour le <b>25 mai 2026</b>
+    Rôles : <b>Quant Research · Quant/Data Analysts · Risk</b> &nbsp;·&nbsp;
+    Zones : <b>France · Luxembourg · Suisse · Allemagne · UK</b> &nbsp;·&nbsp;
+    <b id="total-count">…</b> offres · Mis à jour le <b>5 juin 2026</b>
   </p>
 </header>
 
@@ -119,6 +119,7 @@
   </div>
   <div class="filters" id="filters">
     <button class="fbtn on" data-f="all"         onclick="setF(this)">Tout</button>
+    <button class="fbtn"    data-f="new"          onclick="setF(this)">✨ Nouveautés</button>
     <button class="fbtn"    data-f="hedge"        onclick="setF(this)">🏦 Hedge Fund</button>
     <button class="fbtn"    data-f="banque"       onclick="setF(this)">🏛 Banque IB</button>
     <button class="fbtn"    data-f="asset"        onclick="setF(this)">📊 Asset Mgmt</button>
@@ -139,9 +140,50 @@ const PER = 9;
 let cat = "all", page = 1;
 
 /* ══════════════════════════════════════════════════════════════
-   DATA  — 73 offres
+   DATA  — 81 offres (dont 8 nouvelles ✨)
 ══════════════════════════════════════════════════════════════ */
 const D = [
+
+/* ════════════ ✨ NOUVELLES OFFRES — Quant & Data Analysts · Luxembourg · Suisse · Allemagne ════════════ */
+{cat:"institution",icon:"🇪🇺",company:"BEI — Banque Européenne d'Investissement",role:"Trainee — Quantitative Analyst",loc:"Luxembourg",dur:"Traineeship (~5 mois)",type:"off",tl:"Traineeship — Luxembourg",new:true,date:"2026 — Luxembourg",
+desc:"Stage quantitatif au sein de la plus grande banque multilatérale de développement (BEI). Modélisation financière, analyse de risque de portefeuille, pricing et outils quantitatifs. Excellent point d'entrée institutionnel au Luxembourg pour un profil maths app / quant.",
+skills:["Quant modelling","Risk","Python","Finance","Économétrie"],
+url:"https://www.eib.org/en/about/careers/categories/traineeships/index"},
+
+{cat:"institution",icon:"🇪🇺",company:"FEI — Fonds Européen d'Investissement (groupe BEI)",role:"Trainee — Data Analyst",loc:"Luxembourg",dur:"Traineeship",type:"off",tl:"Traineeship — Luxembourg",new:true,date:"2026 — Luxembourg",
+desc:"Stage data analyst au FEI (groupe BEI), spécialisé dans le financement des PME et le capital-risque européen. Analyse de données, reporting, tableaux de bord et appui aux services de gestion de mandats. Idéal pour un profil data / stats orienté finance.",
+skills:["Data Analysis","SQL","Python","Reporting","Finance"],
+url:"https://lu.linkedin.com/jobs/view/trainee-%E2%80%93-data-analyst-at-european-investment-fund-eif-4420454134"},
+
+{cat:"institution",icon:"🌐",company:"Banque Centrale Européenne (BCE)",role:"Traineeship — Strategic Risk and Analytics Division",loc:"Francfort",dur:"Traineeship",type:"off",tl:"Traineeship — Risk & Analytics",new:true,date:"2026 — Francfort",
+desc:"Au sein de la division Strategic Risk and Analytics de la BCE. Analyse quantitative des risques, développement de modèles et d'outils analytiques pour la supervision et la stratégie de risque. Très bon profil quant / data / économétrie.",
+skills:["Risk analytics","Modélisation","Python/R","Économétrie","Stats"],
+url:"https://talent.ecb.europa.eu/careers/JobDetail/Traineeship-in-the-Strategic-Risk-and-Analytics-Division/12263"},
+
+{cat:"institution",icon:"🇩🇪",company:"Deutsche Bundesbank",role:"Internship — Financial Stability (analyses quantitatives)",loc:"Francfort",dur:"Stage",type:"off",tl:"Stage — banque centrale DE",new:true,date:"2026 — Francfort",
+desc:"À la banque centrale allemande. Appui aux analyses quantitatives de risque et au développement de modèles empiriques sur le système financier allemand et international. Profil économétrie / finance quantitative recherché.",
+skills:["Stabilité financière","Économétrie","Modèles empiriques","R/Python","Risk"],
+url:"https://www.bundesbank.de/en/career/job-offers/internship-in-financial-stability-914832"},
+
+{cat:"banque",icon:"🏛",company:"Deutsche Börse Group",role:"Intern — Quantitative Analysis (f/m/d)",loc:"Francfort",dur:"Stage 4–6 mois",type:"off",tl:"Stage — 4 à 6 mois",new:true,date:"2026 — Francfort",
+desc:"Stage en analyse quantitative chez l'opérateur de la Bourse de Francfort (Deutsche Börse). Création et amélioration d'offres analytiques, analyses sur mesure, exploitation de données de marché. Profil maths / stats / finance.",
+skills:["Quantitative Analysis","Data","Python","Marchés financiers","Stats"],
+url:"https://www.jobteaser.com/fr/job-offers/286aa60d-b9b6-48a3-aa4b-737a87fa7b2e-deutsche-borse-group-intern-quantitative-analysis-f-m-d"},
+
+{cat:"banque",icon:"🏛",company:"Deutsche Bank",role:"Internship — Group Strategic Analytics 2026 (f/m/x)",loc:"Francfort / Berlin",dur:"Off-cycle",type:"off",tl:"Off-cycle — quant",new:true,date:"2026 — Allemagne",
+desc:"Stage dans l'équipe Group Strategic Analytics de Deutsche Bank. Modélisation quantitative du risque, analytics avancés et développement d'outils. Profil discipline quantitative (mathematical finance, statistiques, économétrie) requis.",
+skills:["Quant modelling","Risk","Python","Statistiques","Économétrie"],
+url:"https://db.recsolu.com/jobs/lHAtgnkBSoKgzOsXklTN4w?locale=en"},
+
+{cat:"asset",icon:"📊",company:"Deloitte Luxembourg",role:"Intern — Investment Fund Risk Analytics & Data Science",loc:"Luxembourg",dur:"Stage — sept. / déc. 2026",type:"off",tl:"Stage — Luxembourg",new:true,date:"Début sept. ou déc. 2026",
+desc:"Stage en analytics du risque et data science appliqués à l'industrie des fonds d'investissement (1re place de fonds d'Europe : Luxembourg). Modélisation de risque, automatisation, machine learning sur données de fonds. Parfait pour un profil quant / data analyst.",
+skills:["Risk Analytics","Data Science","Python","Fonds d'investissement","ML"],
+url:"https://jobs.deloitte.lu/go/Trainees/3746701/"},
+
+{cat:"asset",icon:"📊",company:"EFG International",role:"Finance Data Analytics & Power BI Internship",loc:"Genève",dur:"Stage",type:"off",tl:"Stage — Genève",new:true,date:"2026 — Genève",
+desc:"Stage en data analytics financière chez EFG International, banque privée suisse. Construction de tableaux de bord (Power BI), analyse de données financières, automatisation du reporting. Bonne porte d'entrée « data analyst » dans la finance suisse.",
+skills:["Data Analytics","Power BI","SQL","Reporting","Finance"],
+url:"https://www.efinancialcareers.com/jobs/quantitative-research-internship/in-switzerland"},
 
 /* ──────────── HEDGE FUNDS ──────────── */
 {cat:"hedge",icon:"🏦",company:"Qube Research & Technologies (QRT)",role:"Internship — Quantitative Research / Trading",loc:"Paris · Londres · Zurich · Genève",dur:"4–6 mois",type:"off",tl:"Off-cycle",date:"Début : avr.–juin 2026 (continu)",
@@ -526,7 +568,7 @@ document.getElementById("total-count").textContent = D.length;
 function visible(){
   const q = document.getElementById("q").value.trim().toLowerCase();
   return D.filter(d=>{
-    const catOk = cat==="all"||d.cat===cat;
+    const catOk = cat==="all" ? true : (cat==="new" ? d.new===true : d.cat===cat);
     const hay = [d.company,d.role,d.loc,d.desc,d.dur,...d.skills].join(" ").toLowerCase();
     return catOk&&(!q||hay.includes(q));
   });
@@ -547,6 +589,7 @@ function renderCards(items){
         <div class="cat-icon">${d.icon}</div>
       </div>
       <div class="tags">
+        ${d.new?'<span class="tag t-new">✨ Nouveau</span>':''}
         <span class="tag t-loc">📍 ${d.loc}</span>
         <span class="tag t-dur">⏱ ${d.dur}</span>
         <span class="tag ${tc}">${d.tl}</span>
