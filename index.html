@@ -140,11 +140,61 @@ const PER = 9;
 let cat = "all", page = 1;
 
 /* ══════════════════════════════════════════════════════════════
-   DATA  — 81 offres (dont 8 nouvelles ✨)
+   DATA  — 90 offres (dont 17 nouvelles ✨)
 ══════════════════════════════════════════════════════════════ */
 const D = [
 
-/* ════════════ ✨ NOUVELLES OFFRES — Quant & Data Analysts · Luxembourg · Suisse · Allemagne ════════════ */
+/* ════════════ ✨ NOUVELLES OFFRES 2026 — Quant & Data Analysts · France (incl. province) · Suisse · UE ════════════ */
+
+/* — France : assurance (Le Mans, Niort, Paris) — */
+{cat:"assurance",icon:"🛡",company:"MAIF",role:"Stage — Data Scientist (F/H)",loc:"Niort",dur:"6 mois",type:"off",tl:"Stage — Niort",new:true,date:"2026 — Niort (province)",
+desc:"Stage data science chez la MAIF, mutuelle d'assurance basée à Niort. Modélisation et machine learning sur données assurantielles (tarification, risque, sinistralité). Profil 5e année stats (type ENSAI / Master 2 Statistiques) avec solides bases en modélisation.",
+skills:["Data Science","Machine Learning","Python","Modélisation","Statistiques"],
+url:"https://www.wizbii.com/company/maif/job/data-scientist-stage-niort-h-f"},
+
+{cat:"assurance",icon:"🛡",company:"Covéa (MAAF · MMA · GMF)",role:"Stages — Actuariat & Data Science",loc:"Le Mans · Niort · Paris",dur:"Stages 4–6 mois",type:"off",tl:"Stages — Le Mans / Niort",new:true,date:"Vagues 2026 — Le Mans / Niort / Paris",
+desc:"Groupe mutualiste Covéa (MAAF, MMA, GMF + réassureur PartnerRe). Stages en actuariat, data science et études statistiques sur ses sites du Mans, de Niort et de Paris : modélisation, risques climatiques/naturels, pilotage. Idéal pour un profil maths app / actuariat en province.",
+skills:["Actuariat","Data Science","Modélisation","R/Python","Risque"],
+url:"https://recrutement.covea.com/actuariat-data"},
+
+{cat:"assurance",icon:"🛡",company:"AXA France",role:"Stage — Data Scientist (F/H)",loc:"Nanterre",dur:"6 mois",type:"off",tl:"Stage — data science",new:true,date:"2026 — Nanterre",
+desc:"Stage data science chez AXA France. Développement de modèles de machine learning (Python), cloud (Azure/GCP/AWS), industrialisation. Bon point d'entrée « data scientist » dans l'assurance, au-delà de l'actuariat pur.",
+skills:["Data Science","Machine Learning","Python","Cloud","Git"],
+url:"https://www.welcometothejungle.com/fr/companies/axa/jobs/data-scientist-f-h-stage_nanterre"},
+
+{cat:"assurance",icon:"🛡",company:"CNP Assurances",role:"Stage — Finance / Actuariat (F/H)",loc:"Issy-les-Moulineaux",dur:"6 mois — mars 2026",type:"off",tl:"Stage 6 mois",new:true,date:"Dès mars 2026",
+desc:"Stage au sein des fonctions clés Actuarielle et Gestion des Risques de CNP Caution (groupe CNP Assurances, La Banque Postale). Modélisation actuarielle, gestion des risques, études quantitatives. Profil actuariat / maths app.",
+skills:["Actuariat","Gestion des risques","Modélisation","Excel/VBA","Python"],
+url:"https://youllgetit.eu/internships/e3354ed3-1278-585e-90ca-e23c0f40d15b/stage-finance-actuariat-hf-at-cnp-assurances-issy-les-moulineaux"},
+
+{cat:"assurance",icon:"🛡",company:"Crédit Agricole Assurances",role:"Stage — Chargé(e) d'études actuarielles (H/F)",loc:"Paris · Montrouge",dur:"6 mois",type:"off",tl:"Stage — actuariat",new:true,date:"80+ stages/an — 2026",
+desc:"Crédit Agricole Assurances (1er assureur de France) ouvre 80+ stages/an en actuariat, finance, data & IA. Études actuarielles : provisionnement, tarification, modélisation des risques. Forte composante quantitative.",
+skills:["Actuariat","Modélisation","Statistiques","R/Python","Risque"],
+url:"https://fr.linkedin.com/jobs/view/stage-charg%C3%A9-e-d-%C3%A9tudes-actuarielles-h-f-at-cr%C3%A9dit-agricole-assurances-4407453234"},
+
+/* — France : asset / banques / institution — */
+{cat:"asset",icon:"📊",company:"Amundi",role:"Stage — Data Analyst / Quant (6 mois)",loc:"Paris",dur:"6 mois",type:"off",tl:"Stage 6 mois",new:true,date:"2026 — Paris",
+desc:"1er gérant d'actifs européen. Stages en data analysis et recherche quantitative : analyse de données de marché, outils d'aide à la décision d'investissement, IA appliquée à la gestion (Amundi Investment Institute, Quant Portfolio Strategy). Profil data / quant.",
+skills:["Data Analysis","Quant research","Python","Gestion d'actifs","ML"],
+url:"https://jobs.amundi.com/homepage.aspx?LCID=2057"},
+
+{cat:"asset",icon:"📊",company:"La Banque Postale",role:"Stage — Data Analyst / Data Scientist (F/H)",loc:"Paris",dur:"Stage",type:"off",tl:"Stage — data",new:true,date:"2026 — Paris",
+desc:"Stage data analyst / data scientist à La Banque Postale. Analyse de données, modélisation, machine learning et reporting au service des métiers bancaires. Bonne porte d'entrée « data » dans une grande banque française.",
+skills:["Data Analysis","Data Science","Python","SQL","Machine Learning"],
+url:"https://www.labanquepostale.com/candidats/offres-d-emploi/nos-offres-d-emploi.job-17142.html/stage---data-analystscientist-fh.html"},
+
+{cat:"institution",icon:"🏛",company:"Banque de France",role:"Stage — Data Scientist (salle des marchés / DGSEI)",loc:"Paris",dur:"6 mois",type:"off",tl:"Stage — banque centrale",new:true,date:"2026 — Paris",
+desc:"Stage à la banque centrale française. Data science, modélisation statistique, pricing, machine learning et déploiement (notamment en lien avec la salle des marchés et la recherche économique). Profil économétrie / data / maths app.",
+skills:["Data Science","Économétrie","Machine Learning","Pricing","Python"],
+url:"https://bdf.wd103.myworkdayjobs.com/fr-FR/recrutement-banque-de-france"},
+
+/* — Suisse — */
+{cat:"asset",icon:"📊",company:"Lombard Odier",role:"Emerging Talent — Programmes & stages (quant / data / finance)",loc:"Genève",dur:"Stages / graduate",type:"off",tl:"Genève — banque privée",new:true,date:"Genève — vagues 2026",
+desc:"Lombard Odier, grande banque privée suisse (Genève). Programmes « Emerging Talent » et stages en gestion d'actifs, analyse quantitative, data et finance. Environnement francophone, forte exposition à l'investissement quantitatif et durable.",
+skills:["Quant finance","Data","Asset management","Private banking","Python"],
+url:"https://www.lombardodier.com/home/careers/emerging-talent.html"},
+
+/* — UE : Luxembourg · Allemagne · Suisse — */
 {cat:"institution",icon:"🇪🇺",company:"BEI — Banque Européenne d'Investissement",role:"Trainee — Quantitative Analyst",loc:"Luxembourg",dur:"Traineeship (~5 mois)",type:"off",tl:"Traineeship — Luxembourg",new:true,date:"2026 — Luxembourg",
 desc:"Stage quantitatif au sein de la plus grande banque multilatérale de développement (BEI). Modélisation financière, analyse de risque de portefeuille, pricing et outils quantitatifs. Excellent point d'entrée institutionnel au Luxembourg pour un profil maths app / quant.",
 skills:["Quant modelling","Risk","Python","Finance","Économétrie"],
